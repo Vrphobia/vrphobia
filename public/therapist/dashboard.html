@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR Phobia - Terapist Paneli</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: #2c3e50;
+        }
+        .nav-link {
+            color: rgba(255,255,255,0.8);
+        }
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background: rgba(255,255,255,0.1);
+        }
+        .calendar-container {
+            height: 600px;
+        }
+        .patient-card {
+            transition: transform 0.2s;
+            border-left: 4px solid #0d6efd;
+        }
+        .patient-card:hover {
+            transform: translateY(-5px);
+        }
+        .status-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 px-0 sidebar">
+                <div class="d-flex flex-column p-3 text-white">
+                    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                        <span class="fs-4">VR Phobia Terapist</span>
+                    </a>
+                    <hr>
+                    <ul class="nav nav-pills flex-column mb-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link active">
+                                <i class="bi bi-speedometer2 me-2"></i>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-calendar-week me-2"></i>
+                                Randevularım
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-people me-2"></i>
+                                Danışanlarım
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-file-text me-2"></i>
+                                Raporlar
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" class="nav-link">
+                                <i class="bi bi-gear me-2"></i>
+                                Ayarlar
+                            </a>
+                        </li>
+                    </ul>
+                    <hr>
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2">
+                            <strong>Dr. Ayşe Yılmaz</strong>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                            <li><a class="dropdown-item" href="#">Profil</a></li>
+                            <li><a class="dropdown-item" href="#">Ayarlar</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#">Çıkış Yap</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <div class="col-md-9 col-lg-10 ms-sm-auto px-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Terapist Dashboard</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <button type="button" class="btn btn-primary me-2">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            Yeni Randevu
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary me-2">
+                            <i class="bi bi-calendar me-2"></i>
+                            Takvimi Dışa Aktar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Bugünkü Randevular</h5>
+                                <h2 class="card-text" id="todayAppointments">6</h2>
+                                <p class="mb-0 text-muted">2 tanesi tamamlandı</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Aktif Danışanlar</h5>
+                                <h2 class="card-text" id="activePatients">24</h2>
+                                <p class="mb-0 text-muted">3 yeni danışan</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Bu Haftaki Seanslar</h5>
+                                <h2 class="card-text" id="weeklyAppointments">28</h2>
+                                <p class="mb-0 text-muted">4 VR terapi seansı</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Bekleyen Talepler</h5>
+                                <h2 class="card-text" id="pendingRequests">5</h2>
+                                <p class="mb-0 text-muted">2 acil görüşme talebi</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Client Overview Section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">Danışanlarım</h5>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#clientDetailsModal">
+                                        <i class="bi bi-person-lines-fill"></i> Detaylı Görünüm
+                                    </button>
+                                    <button type="button" class="btn btn-outline-success" onclick="exportClientList()">
+                                        <i class="bi bi-file-earmark-excel"></i> Excel'e Aktar
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="clientsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Ad Soyad</th>
+                                                <th>Yaş</th>
+                                                <th>Tanı</th>
+                                                <th>Son Seans</th>
+                                                <th>Toplam Seans</th>
+                                                <th>İlerleme</th>
+                                                <th>İşlemler</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>#2001</td>
+                                                <td>Ahmet Yılmaz</td>
+                                                <td>35</td>
+                                                <td>Sosyal Fobi</td>
+                                                <td>15.02.2024</td>
+                                                <td>8</td>
+                                                <td>
+                                                    <div class="progress" style="height: 5px;">
+                                                        <div class="progress-bar bg-success" role="progressbar" style="width: 75%"></div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-info" data-bs-toggle="tooltip" title="Detaylar">
+                                                        <i class="bi bi-eye"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-primary" data-bs-toggle="tooltip" title="Randevu Ekle">
+                                                        <i class="bi bi-calendar-plus"></i>
+                                                    </button>
+                                                    <button class="btn btn-sm btn-warning" data-bs-toggle="tooltip" title="Not Ekle">
+                                                        <i class="bi bi-journal-plus"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Appointment Calendar Section -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Randevu Takvimi</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="appointmentCalendar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Bugünkü Randevular</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group">
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">Ahmet Yılmaz</h6>
+                                            <small>14:00</small>
+                                        </div>
+                                        <p class="mb-1">VR Terapi Seansı</p>
+                                        <small class="text-muted">45 dakika</small>
+                                    </a>
+                                    <a href="#" class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h6 class="mb-1">Ayşe Demir</h6>
+                                            <small>15:30</small>
+                                        </div>
+                                        <p class="mb-1">Değerlendirme Görüşmesi</p>
+                                        <small class="text-muted">30 dakika</small>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Appointment Modal -->
+                <div class="modal fade" id="addAppointmentModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Yeni Randevu Ekle</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addAppointmentForm">
+                                    <div class="mb-3">
+                                        <label class="form-label">Danışan</label>
+                                        <select class="form-select" required>
+                                            <option value="">Seçiniz...</option>
+                                            <option>Ahmet Yılmaz</option>
+                                            <option>Ayşe Demir</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Randevu Tarihi</label>
+                                        <input type="date" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Randevu Saati</label>
+                                        <input type="time" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Seans Türü</label>
+                                        <select class="form-select" required>
+                                            <option value="">Seçiniz...</option>
+                                            <option>VR Terapi Seansı</option>
+                                            <option>Değerlendirme Görüşmesi</option>
+                                            <option>Takip Seansı</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Süre (Dakika)</label>
+                                        <select class="form-select" required>
+                                            <option>30</option>
+                                            <option>45</option>
+                                            <option>60</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Notlar</label>
+                                        <textarea class="form-control" rows="3"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                                <button type="button" class="btn btn-primary" onclick="saveAppointment()">Kaydet</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calendar and Upcoming Appointments -->
+                <div class="row mb-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-body calendar-container">
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">Bugünkü Randevular</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="list-group" id="todayAppointmentsList">
+                                    <!-- Appointments will be loaded dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Patients -->
+                <div class="row">
+                    <div class="col-12">
+                        <h5 class="mb-3">Son Danışanlar</h5>
+                        <div class="row" id="recentPatients">
+                            <!-- Patient cards will be loaded dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize calendar
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                slotMinTime: '09:00:00',
+                slotMaxTime: '18:00:00',
+                locale: 'tr',
+                events: [
+                    {
+                        title: 'Ahmet Y. - İlk Görüşme',
+                        start: '2024-02-17T10:00:00',
+                        end: '2024-02-17T11:00:00'
+                    },
+                    {
+                        title: 'Fatma K. - VR Terapi',
+                        start: '2024-02-17T14:00:00',
+                        end: '2024-02-17T15:00:00'
+                    }
+                ]
+            });
+            calendar.render();
+
+            // Initialize Appointment Calendar
+            var appointmentCalendarEl = document.getElementById('appointmentCalendar');
+            var appointmentCalendar = new FullCalendar.Calendar(appointmentCalendarEl, {
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                slotMinTime: '09:00:00',
+                slotMaxTime: '18:00:00',
+                locale: 'tr',
+                buttonText: {
+                    today: 'Bugün',
+                    month: 'Ay',
+                    week: 'Hafta',
+                    day: 'Gün'
+                },
+                allDaySlot: false,
+                selectable: true,
+                select: function(info) {
+                    $('#addAppointmentModal').modal('show');
+                },
+                events: [
+                    {
+                        title: 'Ahmet Yılmaz - VR Terapi',
+                        start: '2024-02-17T14:00:00',
+                        end: '2024-02-17T14:45:00'
+                    },
+                    {
+                        title: 'Ayşe Demir - Değerlendirme',
+                        start: '2024-02-17T15:30:00',
+                        end: '2024-02-17T16:00:00'
+                    }
+                ]
+            });
+            appointmentCalendar.render();
+
+            // Load today's appointments
+            loadTodayAppointments();
+
+            // Load recent patients
+            loadRecentPatients();
+
+            // Initialize DataTable
+            $('#clientsTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/tr.json'
+                },
+                pageLength: 10,
+                order: [[0, 'desc']]
+            });
+        });
+
+        function loadTodayAppointments() {
+            const appointments = [
+                { time: '10:00', patient: 'Ahmet Y.', type: 'İlk Görüşme', status: 'Tamamlandı' },
+                { time: '14:00', patient: 'Fatma K.', type: 'VR Terapi', status: 'Bekliyor' },
+                { time: '16:00', patient: 'Mehmet S.', type: 'Takip', status: 'Bekliyor' }
+            ];
+
+            const container = document.getElementById('todayAppointmentsList');
+            appointments.forEach(apt => {
+                container.innerHTML += `
+                    <div class="list-group-item list-group-item-action">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h6 class="mb-1">${apt.time} - ${apt.patient}</h6>
+                            <small class="text-${apt.status === 'Tamamlandı' ? 'success' : 'warning'}">${apt.status}</small>
+                        </div>
+                        <small class="text-muted">${apt.type}</small>
+                    </div>
+                `;
+            });
+        }
+
+        function loadRecentPatients() {
+            const patients = [
+                { name: 'Ayşe K.', age: 28, diagnosis: 'Sosyal Fobi', progress: 'İyi', sessions: 5 },
+                { name: 'Mehmet Y.', age: 35, diagnosis: 'Yükseklik Korkusu', progress: 'Orta', sessions: 3 },
+                { name: 'Fatma S.', age: 42, diagnosis: 'Agorafobi', progress: 'İyi', sessions: 7 }
+            ];
+
+            const container = document.getElementById('recentPatients');
+            patients.forEach(patient => {
+                container.innerHTML += `
+                    <div class="col-md-4 mb-3">
+                        <div class="card patient-card">
+                            <div class="card-body">
+                                <span class="badge bg-${patient.progress === 'İyi' ? 'success' : 'warning'} status-badge">
+                                    ${patient.progress}
+                                </span>
+                                <h5 class="card-title">${patient.name}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">${patient.age} yaş</h6>
+                                <p class="card-text">
+                                    <strong>Tanı:</strong> ${patient.diagnosis}<br>
+                                    <strong>Seans Sayısı:</strong> ${patient.sessions}
+                                </p>
+                                <div class="btn-group">
+                                    <button class="btn btn-sm btn-outline-primary">Detaylar</button>
+                                    <button class="btn btn-sm btn-outline-success">Randevu Ver</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function saveAppointment() {
+            // Form validation
+            const form = document.getElementById('addAppointmentForm');
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+
+            // TODO: Send data to server
+            alert('Randevu başarıyla eklendi!');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('addAppointmentModal'));
+            modal.hide();
+            form.reset();
+        }
+
+        function exportClientList() {
+            // TODO: Implement export functionality
+            alert('Liste Excel formatında indirilecek');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VR PHOBIA - Danışan detayları ve seans takibi">
+    <meta name="theme-color" content="#4F46E5">
+    <title>VR PHOBIA - Danışan Detayları</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    
+    <!-- Preload critical assets -->
+    <link rel="preload" href="assets/images/logo-white.png" as="image">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" as="style">
+    
+    <!-- Stylesheets -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Critical CSS -->
+    <style>
+        .bg-gradient {
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+        }
+        .form-input {
+            @apply w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500;
+        }
+        [x-cloak] { 
+            display: none !important; 
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="min-h-screen">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-lg" role="navigation" aria-label="Main navigation">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="flex justify-between h-16">
+                    <div class="flex">
+                        <div class="flex-shrink-0 flex items-center">
+                            <img src="assets/images/logo.png" alt="VR PHOBIA Logo" class="h-8" width="32" height="32">
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <span id="userName" class="text-gray-700 mr-4"></span>
+                        <button id="logoutBtn" class="text-gray-700 hover:text-gray-900" aria-label="Çıkış yap">
+                            <i class="fas fa-sign-out-alt" aria-hidden="true"></i> Çıkış
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <!-- Client Header -->
+            <div class="bg-white shadow rounded-lg mb-6">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 id="clientName" class="text-2xl font-bold text-gray-900"></h2>
+                            <p id="clientCompany" class="text-sm text-gray-500 mt-1"></p>
+                        </div>
+                        <div class="flex space-x-4">
+                            <button id="editClient" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                                <i class="fas fa-edit mr-2"></i> Düzenle
+                            </button>
+                            <button id="scheduleAppointment" class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+                                <i class="fas fa-calendar-plus mr-2"></i> Randevu Planla
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Client Information Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <!-- Contact Information -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">İletişim Bilgileri</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-sm text-gray-500">E-posta</label>
+                                <p id="clientEmail" class="text-gray-900"></p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Telefon</label>
+                                <p id="clientPhone" class="text-gray-900"></p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Departman</label>
+                                <p id="clientDepartment" class="text-gray-900"></p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Pozisyon</label>
+                                <p id="clientPosition" class="text-gray-900"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Session Statistics -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Seans İstatistikleri</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-sm text-gray-500">Toplam Seans</label>
+                                <p id="totalSessions" class="text-2xl font-bold text-blue-600"></p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Tamamlanan Seanslar</label>
+                                <p id="completedSessions" class="text-2xl font-bold text-green-600"></p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">İptal Edilen Seanslar</label>
+                                <p id="cancelledSessions" class="text-2xl font-bold text-red-600"></p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Ortalama Seans Süresi</label>
+                                <p id="avgSessionDuration" class="text-2xl font-bold text-purple-600"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Information -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Finansal Bilgiler</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-sm text-gray-500">Toplam Ödeme</label>
+                                <p id="totalPayments" class="text-2xl font-bold text-green-600"></p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Bekleyen Ödeme</label>
+                                <p id="pendingPayments" class="text-2xl font-bold text-yellow-600"></p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Son Ödeme Tarihi</label>
+                                <p id="lastPaymentDate" class="text-gray-900"></p>
+                            </div>
+                            <div>
+                                <label class="text-sm text-gray-500">Ödeme Durumu</label>
+                                <p id="paymentStatus" class="text-gray-900"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointment History and Calendar -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Appointment History -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Randevu Geçmişi</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead>
+                                    <tr>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tarih</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tür</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Durum</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Terapist</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appointmentHistory" class="divide-y divide-gray-200">
+                                    <!-- Appointments will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Google Calendar Integration -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Google Takvim</h3>
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Charts -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <!-- Session Progress Chart -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Seans İlerleme Grafiği</h3>
+                        <canvas id="progressChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Payment History Chart -->
+                <div class="bg-white shadow rounded-lg">
+                    <div class="px-4 py-5 sm:p-6">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Ödeme Geçmişi</h3>
+                        <canvas id="paymentChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loadingIndicator" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-4 rounded-lg shadow-xl">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <p class="mt-2 text-gray-600">Yükleniyor...</p>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="errorToast" class="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg transform transition-transform duration-300 translate-y-full hidden">
+        <div class="flex items-center">
+            <i class="fas fa-exclamation-circle mr-2"></i>
+            <span id="errorMessage"></span>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="/js/client-details.js" type="module"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const clientId = new URLSearchParams(window.location.search).get('id');
+            let googleCalendar;
+
+            // Load client data
+            async function loadClientData() {
+                try {
+                    const response = await fetch(`/api/users/${clientId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+                    const client = await response.json();
+
+                    // Update client information
+                    document.getElementById('clientName').textContent = `${client.firstName} ${client.lastName}`;
+                    document.getElementById('clientEmail').textContent = client.email;
+                    document.getElementById('clientPhone').textContent = client.phone;
+                    document.getElementById('clientCompany').textContent = client.company.name;
+                    document.getElementById('clientDepartment').textContent = client.department;
+                    document.getElementById('clientPosition').textContent = client.position;
+
+                    // Load statistics
+                    loadStatistics();
+                    loadAppointmentHistory();
+                    initializeCharts();
+                } catch (error) {
+                    console.error('Error loading client data:', error);
+                }
+            }
+
+            // Load client statistics
+            async function loadStatistics() {
+                try {
+                    const response = await fetch(`/api/users/${clientId}/statistics`, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+                    const stats = await response.json();
+
+                    // Update statistics
+                    document.getElementById('totalSessions').textContent = stats.totalSessions;
+                    document.getElementById('completedSessions').textContent = stats.completedSessions;
+                    document.getElementById('cancelledSessions').textContent = stats.cancelledSessions;
+                    document.getElementById('avgSessionDuration').textContent = `${stats.avgSessionDuration} dk`;
+                    document.getElementById('totalPayments').textContent = `₺${stats.totalPayments}`;
+                    document.getElementById('pendingPayments').textContent = `₺${stats.pendingPayments}`;
+                    document.getElementById('lastPaymentDate').textContent = new Date(stats.lastPaymentDate).toLocaleDateString('tr-TR');
+                    document.getElementById('paymentStatus').textContent = stats.paymentStatus;
+                } catch (error) {
+                    console.error('Error loading statistics:', error);
+                }
+            }
+
+            // Load appointment history
+            async function loadAppointmentHistory() {
+                try {
+                    const response = await fetch(`/api/appointments?client=${clientId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+                    const appointments = await response.json();
+
+                    const tbody = document.getElementById('appointmentHistory');
+                    tbody.innerHTML = appointments.map(appointment => `
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                ${new Date(appointment.dateTime).toLocaleDateString('tr-TR')}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                ${appointment.type}
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                    ${getStatusColor(appointment.status)}">
+                                    ${appointment.status}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                ${appointment.therapist.firstName} ${appointment.therapist.lastName}
+                            </td>
+                        </tr>
+                    `).join('');
+                } catch (error) {
+                    console.error('Error loading appointment history:', error);
+                }
+            }
+
+            // Initialize charts
+            function initializeCharts() {
+                // Progress Chart
+                const progressCtx = document.getElementById('progressChart').getContext('2d');
+                new Chart(progressCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran'],
+                        datasets: [{
+                            label: 'İlerleme Puanı',
+                            data: [65, 70, 75, 80, 85, 90],
+                            borderColor: 'rgb(59, 130, 246)',
+                            tension: 0.1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+
+                // Payment Chart
+                const paymentCtx = document.getElementById('paymentChart').getContext('2d');
+                new Chart(paymentCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran'],
+                        datasets: [{
+                            label: 'Ödemeler',
+                            data: [500, 750, 1000, 750, 1250, 1000],
+                            backgroundColor: 'rgb(34, 197, 94)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Initialize Google Calendar
+            function initGoogleCalendar() {
+                gapi.client.init({
+                    apiKey: 'YOUR_GOOGLE_API_KEY',
+                    clientId: 'YOUR_GOOGLE_CLIENT_ID',
+                    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest'],
+                    scope: 'https://www.googleapis.com/auth/calendar'
+                }).then(function() {
+                    googleCalendar = gapi.auth2.getAuthInstance();
+                    googleCalendar.isSignedIn.listen(updateSigninStatus);
+                    updateSigninStatus(googleCalendar.isSignedIn.get());
+                });
+            }
+
+            function updateSigninStatus(isSignedIn) {
+                if (isSignedIn) {
+                    loadCalendarEvents();
+                }
+            }
+
+            async function loadCalendarEvents() {
+                try {
+                    const response = await gapi.client.calendar.events.list({
+                        'calendarId': 'primary',
+                        'timeMin': (new Date()).toISOString(),
+                        'showDeleted': false,
+                        'singleEvents': true,
+                        'maxResults': 10,
+                        'orderBy': 'startTime'
+                    });
+
+                    const events = response.result.items;
+                    // Update calendar view with events
+                } catch (error) {
+                    console.error('Error loading calendar events:', error);
+                }
+            }
+
+            // Utility functions
+            function getStatusColor(status) {
+                const colors = {
+                    'completed': 'bg-green-100 text-green-800',
+                    'cancelled': 'bg-red-100 text-red-800',
+                    'scheduled': 'bg-blue-100 text-blue-800',
+                    'pending': 'bg-yellow-100 text-yellow-800'
+                };
+                return colors[status] || 'bg-gray-100 text-gray-800';
+            }
+
+            // Event Listeners
+            document.getElementById('editClient').addEventListener('click', function() {
+                // Implement edit functionality
+            });
+
+            document.getElementById('scheduleAppointment').addEventListener('click', function() {
+                // Implement appointment scheduling
+            });
+
+            document.getElementById('logoutBtn').addEventListener('click', function() {
+                localStorage.removeItem('token');
+                window.location.href = '/login.html';
+            });
+
+            // Initialize
+            loadClientData();
+            gapi.load('client:auth2', initGoogleCalendar);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR Phobia - Admin Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #2ecc71;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-bg: #343a40;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--light-bg);
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 4px 0;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+
+        .sidebar .nav-link.active {
+            color: #fff;
+            background: var(--accent-color);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            border: none;
+            padding: 20px;
+            height: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .stat-card h3 {
+            font-size: 28px;
+            font-weight: 600;
+            margin: 10px 0;
+            color: var(--primary-color);
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table th {
+            font-weight: 600;
+            color: var(--primary-color);
+            border-bottom-width: 1px;
+        }
+
+        .logo-container {
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-container img {
+            max-width: 150px;
+            margin-bottom: 15px;
+        }
+
+        .logo-container h4 {
+            color: white;
+            font-size: 1.2rem;
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin: 20px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .btn-custom {
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar p-0">
+                <div class="logo-container">
+                    <img src="/assets/images/logo.png" alt="VR Phobia Logo">
+                    <h4>VR Phobia</h4>
+                </div>
+
+                <div class="user-profile">
+                    <img src="/assets/images/avatar.png" alt="User Avatar" class="user-avatar">
+                    <div>
+                        <h6 class="mb-0">Admin</h6>
+                        <small>Yönetici</small>
+                    </div>
+                </div>
+
+                <div class="nav flex-column px-3">
+                    <a class="nav-link active" href="#overview" data-bs-toggle="tab">
+                        <i class="bi bi-house-door"></i> Genel Bakış
+                    </a>
+                    <a class="nav-link" href="#therapists" data-bs-toggle="tab">
+                        <i class="bi bi-people"></i> Terapistler
+                    </a>
+                    <a class="nav-link" href="#therapy-types" data-bs-toggle="tab">
+                        <i class="bi bi-list-check"></i> Terapi Türleri
+                    </a>
+                    <a class="nav-link" href="#organizations" data-bs-toggle="tab">
+                        <i class="bi bi-building"></i> Kurumlar
+                    </a>
+                    <a class="nav-link" href="#organization-clients" data-bs-toggle="tab">
+                        <i class="bi bi-person-badge"></i> Kurum Danışanları
+                    </a>
+                    <a class="nav-link" href="#individual-clients" data-bs-toggle="tab">
+                        <i class="bi bi-person"></i> Bireysel Danışanlar
+                    </a>
+                    <a class="nav-link" href="#appointments" data-bs-toggle="tab">
+                        <i class="bi bi-calendar-check"></i> Randevular
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 content">
+                <div class="tab-content">
+                    <!-- Overview Tab -->
+                    <div class="tab-pane fade show active" id="overview">
+                        <div class="section-header">
+                            <h2 class="section-title">Genel Bakış</h2>
+                            <button class="btn btn-custom btn-primary">
+                                <i class="bi bi-download me-2"></i>Rapor İndir
+                            </button>
+                        </div>
+
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-primary bg-opacity-10 text-primary">
+                                        <i class="bi bi-people"></i>
+                                    </div>
+                                    <h3 id="therapist-count">0</h3>
+                                    <p>Aktif Terapist</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-success bg-opacity-10 text-success">
+                                        <i class="bi bi-person-check"></i>
+                                    </div>
+                                    <h3 id="client-count">0</h3>
+                                    <p>Toplam Danışan</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="stat-card">
+                                    <div class="stat-icon bg-warning bg-opacity-10 text-warning">
+                                        <i class="bi bi-calendar2-check"></i>
+                                    </div>
+                                    <h3 id="today-appointments">0</h3>
+                                    <p>Bugünkü Randevu</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activities Table -->
+                        <div class="table-container">
+                            <div class="section-header">
+                                <h5 class="section-title">Son Aktiviteler</h5>
+                                <button class="btn btn-custom btn-outline-primary btn-sm">
+                                    <i class="bi bi-arrow-clockwise me-2"></i>Yenile
+                                </button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Tarih</th>
+                                            <th>Aktivite</th>
+                                            <th>Kullanıcı</th>
+                                            <th>Durum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="activities-table">
+                                        <tr>
+                                            <td colspan="4" class="text-center">Yükleniyor...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Therapists Tab -->
+                    <div class="tab-pane fade" id="therapists">
+                        <div class="section-header">
+                            <h2 class="section-title">Terapistler</h2>
+                            <button class="btn btn-custom btn-primary">
+                                <i class="bi bi-plus-lg me-2"></i>Yeni Terapist
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <div class="table-responsive">
+                                <table class="table" id="therapists-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Ad</th>
+                                            <th>Soyad</th>
+                                            <th>Email</th>
+                                            <th>Telefon</th>
+                                            <th>Uzmanlık</th>
+                                            <th>İşlemler</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add other tab contents here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Badge renk sınıflarını belirle
+        function getBadgeClass(category) {
+            switch (category) {
+                case 'individual':
+                    return 'bg-primary';
+                case 'child_teen':
+                    return 'bg-success';
+                case 'couple':
+                    return 'bg-info';
+                default:
+                    return 'bg-secondary';
+            }
+        }
+
+        // Sayfa yüklendiğinde verileri çek
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Token'ı localStorage'dan al
+                const userData = JSON.parse(localStorage.getItem('user'));
+                const token = localStorage.getItem('token');
+
+                if (!userData || !token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                // API istekleri için headers
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                };
+
+                // Terapistleri çek
+                const therapistsResponse = await fetch('/api/therapists', {
+                    headers: headers
+                });
+                
+                if (!therapistsResponse.ok) {
+                    throw new Error('Terapist verilerini alma başarısız');
+                }
+                
+                const therapists = await therapistsResponse.json();
+                
+                // Terapist sayısını güncelle
+                document.getElementById('therapist-count').textContent = therapists.length;
+
+                // Terapist tablosunu doldur
+                const tbody = document.querySelector('#therapists-table tbody');
+                tbody.innerHTML = therapists.map(t => `
+                    <tr>
+                        <td>${t.name}</td>
+                        <td>${t.surname}</td>
+                        <td>${t.email}</td>
+                        <td>${t.phone}</td>
+                        <td>
+                            ${t.specialties.map(s => `
+                                <span class="badge ${getBadgeClass(s.category)} me-1">
+                                    ${s.name}
+                                </span>
+                            `).join('')}
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                // Diğer verileri çek
+                const [orgClientsResponse, indClientsResponse] = await Promise.all([
+                    fetch('/api/organization-clients', { headers }),
+                    fetch('/api/individual-clients', { headers })
+                ]);
+
+                if (!orgClientsResponse.ok || !indClientsResponse.ok) {
+                    throw new Error('Danışan verilerini alma başarısız');
+                }
+
+                const orgClients = await orgClientsResponse.json();
+                const indClients = await indClientsResponse.json();
+
+                // Toplam danışan sayısını güncelle
+                document.getElementById('client-count').textContent = 
+                    orgClients.length + indClients.length;
+
+                // Bugünkü randevuları çek
+                const appointmentsResponse = await fetch('/api/appointments', { headers });
+                
+                if (!appointmentsResponse.ok) {
+                    throw new Error('Randevu verilerini alma başarısız');
+                }
+                
+                const appointments = await appointmentsResponse.json();
+                
+                const today = new Date().toISOString().split('T')[0];
+                const todayAppointments = appointments.filter(a => 
+                    a.appointment_time.startsWith(today)
+                );
+
+                document.getElementById('today-appointments').textContent = 
+                    todayAppointments.length;
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert('Veriler yüklenirken bir hata oluştu: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terapi Türleri - VR Phobia Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+            padding: 48px 0 0;
+            box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+        }
+        
+        .sidebar-sticky {
+            position: relative;
+            top: 0;
+            height: calc(100vh - 48px);
+            padding-top: .5rem;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0, 0, 0, .1);
+        }
+        
+        .nav-link {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            color: #0d6efd;
+        }
+        
+        .nav-link.active {
+            color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-light bg-light fixed-top">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">VR Phobia Admin</span>
+            <div class="d-flex">
+                <span class="navbar-text me-3">Admin</span>
+                <button class="btn btn-outline-danger btn-sm" onclick="logout()">Çıkış Yap</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="therapy-types.html">
+                                <i class="bi bi-list-check me-2"></i>Terapi Türleri
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="corporate-clients.html">
+                                <i class="bi bi-building me-2"></i>Kurumsal Danışanlar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="individual-clients.html">
+                                <i class="bi bi-person me-2"></i>Bireysel Danışanlar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="appointments.html">
+                                <i class="bi bi-calendar-event me-2"></i>Randevular
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pt-3">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Terapi Türleri</h1>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTherapyTypeModal">
+                        <i class="bi bi-plus"></i> Yeni Terapi Türü
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Terapi Adı</th>
+                                <th>Kategori</th>
+                                <th>Açıklama</th>
+                                <th>Terapistler</th>
+                                <th>İşlemler</th>
+                            </tr>
+                        </thead>
+                        <tbody id="therapy-types-table">
+                            <!-- JavaScript ile doldurulacak -->
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Yeni Terapi Türü Modal -->
+    <div class="modal fade" id="addTherapyTypeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Terapi Türü Ekle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addTherapyTypeForm">
+                        <div class="mb-3">
+                            <label class="form-label">Terapi Adı</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Kategori</label>
+                            <select class="form-select" name="category" required>
+                                <option value="individual">Bireysel</option>
+                                <option value="child_teen">Çocuk-Ergen</option>
+                                <option value="couple">Çift</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Açıklama</label>
+                            <textarea class="form-control" name="description" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" onclick="saveTherapyType()">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Kategori badge renk sınıflarını belirle
+        function getCategoryBadgeClass(category) {
+            switch (category) {
+                case 'individual':
+                    return 'bg-primary';
+                case 'child_teen':
+                    return 'bg-success';
+                case 'couple':
+                    return 'bg-info';
+                default:
+                    return 'bg-secondary';
+            }
+        }
+
+        // Kategori adlarını Türkçe'ye çevir
+        function getCategoryName(category) {
+            switch (category) {
+                case 'individual':
+                    return 'Bireysel';
+                case 'child_teen':
+                    return 'Çocuk-Ergen';
+                case 'couple':
+                    return 'Çift';
+                default:
+                    return category;
+            }
+        }
+
+        // Sayfa yüklendiğinde verileri çek
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Token'ı localStorage'dan al
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    window.location.href = '/login.html';
+                    return;
+                }
+
+                // API istekleri için headers
+                const headers = {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                };
+
+                // Terapi türlerini ve terapistleri çek
+                const [therapyTypesResponse, therapistsResponse] = await Promise.all([
+                    fetch('/api/therapy-types', { headers }),
+                    fetch('/api/therapists', { headers })
+                ]);
+
+                if (!therapyTypesResponse.ok || !therapistsResponse.ok) {
+                    throw new Error('Veri çekme başarısız');
+                }
+
+                const therapyTypes = await therapyTypesResponse.json();
+                const therapists = await therapistsResponse.json();
+
+                // Terapi türleri tablosunu doldur
+                const tbody = document.querySelector('#therapy-types-table');
+                tbody.innerHTML = therapyTypes.map(type => {
+                    // Bu terapi türüne sahip terapistleri bul
+                    const typeTherapists = therapists.filter(t => 
+                        t.specialties.some(s => s.id === type.id)
+                    );
+
+                    return `
+                        <tr>
+                            <td>${type.name}</td>
+                            <td>
+                                <span class="badge ${getCategoryBadgeClass(type.category)}">
+                                    ${getCategoryName(type.category)}
+                                </span>
+                            </td>
+                            <td>${type.description || '-'}</td>
+                            <td>
+                                ${typeTherapists.map(t => 
+                                    `<span class="badge bg-secondary me-1">${t.name} ${t.surname}</span>`
+                                ).join('')}
+                            </td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary me-1">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Veriler yüklenirken bir hata oluştu: ' + error.message);
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/login.html';
+        }
+    </script>
+</body>
+</html>

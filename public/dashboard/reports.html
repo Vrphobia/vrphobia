@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Raporlar | ESP Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/apexcharts@3.40.0/dist/apexcharts.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet">
+    <style>
+        /* Include the same base styles as index.html */
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f1c40f;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-bg: #2c3e50;
+        }
+
+        .report-card {
+            border: none;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+        }
+
+        .report-filters {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-card {
+            background: linear-gradient(45deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .metric-card .title {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .metric-card .value {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .metric-card .trend {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .trend-up {
+            color: var(--success-color);
+        }
+
+        .trend-down {
+            color: var(--danger-color);
+        }
+
+        .chart-container {
+            height: 400px;
+            margin-bottom: 1.5rem;
+        }
+
+        .table-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .export-buttons {
+            margin-bottom: 1rem;
+        }
+
+        .export-buttons .btn {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Include the same sidebar as index.html -->
+            <div class="col-lg-2 sidebar px-0">
+                <!-- Sidebar content -->
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-10 main-content">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4>Detaylı Raporlar</h4>
+                    <div class="export-buttons">
+                        <button class="btn btn-outline-primary" onclick="exportToPDF()">
+                            <i class="fas fa-file-pdf me-2"></i>PDF
+                        </button>
+                        <button class="btn btn-outline-success" onclick="exportToExcel()">
+                            <i class="fas fa-file-excel me-2"></i>Excel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Report Filters -->
+                <div class="report-filters">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Tarih Aralığı</label>
+                                <input type="text" class="form-control" id="dateRange">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Şirket</label>
+                                <select class="form-control" id="companyFilter">
+                                    <option value="">Tümü</option>
+                                    <option value="1">ABC Şirketi</option>
+                                    <option value="2">XYZ Şirketi</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Program Tipi</label>
+                                <select class="form-control" id="programFilter">
+                                    <option value="">Tümü</option>
+                                    <option value="individual">Bireysel Program</option>
+                                    <option value="corporate">Kurumsal Program</option>
+                                    <option value="vr">VR Program</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label>Terapist</label>
+                                <select class="form-control" id="therapistFilter">
+                                    <option value="">Tümü</option>
+                                    <option value="1">Dr. Ayşe Kaya</option>
+                                    <option value="2">Dr. Can Öztürk</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="title">Toplam Seans Sayısı</div>
+                            <div class="value">1,234</div>
+                            <div class="trend">
+                                <i class="fas fa-arrow-up"></i> 12% geçen aya göre
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="title">Ortalama Seans Süresi</div>
+                            <div class="value">45dk</div>
+                            <div class="trend">
+                                <i class="fas fa-arrow-up"></i> 5% geçen aya göre
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="title">Memnuniyet Oranı</div>
+                            <div class="value">94%</div>
+                            <div class="trend">
+                                <i class="fas fa-arrow-up"></i> 3% geçen aya göre
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="metric-card">
+                            <div class="title">Katılım Oranı</div>
+                            <div class="value">87%</div>
+                            <div class="trend">
+                                <i class="fas fa-arrow-down"></i> 2% geçen aya göre
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="report-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Seans Dağılımı</h5>
+                                <div id="sessionDistributionChart" class="chart-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="report-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Memnuniyet Trendi</h5>
+                                <div id="satisfactionTrendChart" class="chart-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Reports -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="report-card">
+                            <div class="card-body">
+                                <ul class="nav nav-tabs" id="reportTabs">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" data-bs-toggle="tab" href="#sessionsTab">Seans Raporu</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#therapistsTab">Terapist Performansı</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#clientsTab">Müşteri Analizi</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" data-bs-toggle="tab" href="#financialTab">Finansal Rapor</a>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content mt-3">
+                                    <!-- Sessions Report -->
+                                    <div class="tab-pane fade show active" id="sessionsTab">
+                                        <div class="table-responsive">
+                                            <table class="table" id="sessionsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Tarih</th>
+                                                        <th>Müşteri</th>
+                                                        <th>Terapist</th>
+                                                        <th>Program</th>
+                                                        <th>Süre</th>
+                                                        <th>Durum</th>
+                                                        <th>Memnuniyet</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Data will be populated dynamically -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Therapist Performance -->
+                                    <div class="tab-pane fade" id="therapistsTab">
+                                        <div class="table-responsive">
+                                            <table class="table" id="therapistsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Terapist</th>
+                                                        <th>Toplam Seans</th>
+                                                        <th>Ortalama Süre</th>
+                                                        <th>Memnuniyet</th>
+                                                        <th>Doluluk Oranı</th>
+                                                        <th>Performans Skoru</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Data will be populated dynamically -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Client Analysis -->
+                                    <div class="tab-pane fade" id="clientsTab">
+                                        <div class="row mb-4">
+                                            <div class="col-md-6">
+                                                <div id="clientSegmentationChart" class="chart-container"></div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div id="clientRetentionChart" class="chart-container"></div>
+                                            </div>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table" id="clientsTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Şirket</th>
+                                                        <th>Aktif Çalışan</th>
+                                                        <th>Katılım Oranı</th>
+                                                        <th>Ortalama Seans</th>
+                                                        <th>Memnuniyet</th>
+                                                        <th>Trend</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Data will be populated dynamically -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+
+                                    <!-- Financial Report -->
+                                    <div class="tab-pane fade" id="financialTab">
+                                        <div class="row mb-4">
+                                            <div class="col-md-6">
+                                                <div id="revenueChart" class="chart-container"></div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div id="programRevenueChart" class="chart-container"></div>
+                                            </div>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table" id="financialTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Program</th>
+                                                        <th>Gelir</th>
+                                                        <th>Seans Sayısı</th>
+                                                        <th>Ortalama Gelir</th>
+                                                        <th>Büyüme</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- Data will be populated dynamically -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.40.0/dist/apexcharts.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+
+    <script>
+        // Initialize date range picker
+        $('#dateRange').daterangepicker({
+            startDate: moment().subtract(29, 'days'),
+            endDate: moment(),
+            ranges: {
+                'Bugün': [moment(), moment()],
+                'Dün': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Son 7 Gün': [moment().subtract(6, 'days'), moment()],
+                'Son 30 Gün': [moment().subtract(29, 'days'), moment()],
+                'Bu Ay': [moment().startOf('month'), moment().endOf('month')],
+                'Geçen Ay': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            locale: {
+                format: 'DD/MM/YYYY'
+            }
+        });
+
+        // Initialize DataTables
+        $('#sessionsTable').DataTable();
+        $('#therapistsTable').DataTable();
+        $('#clientsTable').DataTable();
+        $('#financialTable').DataTable();
+
+        // Session Distribution Chart
+        var sessionDistributionOptions = {
+            series: [{
+                name: 'Bireysel Seanslar',
+                data: [44, 55, 57, 56, 61, 58, 63]
+            }, {
+                name: 'Grup Seansları',
+                data: [76, 85, 101, 98, 87, 105, 91]
+            }, {
+                name: 'VR Seansları',
+                data: [35, 41, 36, 26, 45, 48, 52]
+            }],
+            chart: {
+                type: 'bar',
+                height: 350,
+                stacked: true,
+                toolbar: {
+                    show: true
+                },
+                zoom: {
+                    enabled: true
+                }
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    borderRadius: 10
+                },
+            },
+            xaxis: {
+                categories: ['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'],
+            },
+            legend: {
+                position: 'right',
+                offsetY: 40
+            },
+            fill: {
+                opacity: 1
+            }
+        };
+
+        var sessionDistributionChart = new ApexCharts(document.querySelector("#sessionDistributionChart"), sessionDistributionOptions);
+        sessionDistributionChart.render();
+
+        // Satisfaction Trend Chart
+        var satisfactionTrendOptions = {
+            series: [{
+                name: 'Memnuniyet Oranı',
+                data: [90, 91, 89, 94, 92, 95, 93]
+            }],
+            chart: {
+                height: 350,
+                type: 'line',
+                zoom: {
+                    enabled: false
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            grid: {
+                row: {
+                    colors: ['#f3f3f3', 'transparent'],
+                    opacity: 0.5
+                },
+            },
+            xaxis: {
+                categories: ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz'],
+            },
+            yaxis: {
+                min: 80,
+                max: 100
+            }
+        };
+
+        var satisfactionTrendChart = new ApexCharts(document.querySelector("#satisfactionTrendChart"), satisfactionTrendOptions);
+        satisfactionTrendChart.render();
+
+        // Export functions
+        function exportToPDF() {
+            // Implement PDF export logic
+            alert('PDF export functionality will be implemented');
+        }
+
+        function exportToExcel() {
+            // Implement Excel export logic
+            alert('Excel export functionality will be implemented');
+        }
+    </script>
+</body>
+</html>

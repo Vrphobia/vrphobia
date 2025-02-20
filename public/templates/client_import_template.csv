@@ -1,0 +1,5 @@
+type,organization,name,surname,email,phone,contact_person,therapy_type_id,therapist_id
+corporate,İpragaz,Ahmet,Yılmaz,ahmet.yilmaz@ipragaz.com,5551234567,İK Müdürü,1,1
+corporate,İpragaz,Mehmet,Kaya,mehmet.kaya@ipragaz.com,5551234568,İK Müdürü,2,1
+individual,,Ayşe,Demir,ayse.demir@gmail.com,5551234569,,3,2
+individual,,Fatma,Çelik,fatma.celik@gmail.com,5551234570,,4,2
