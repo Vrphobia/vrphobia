@@ -304,9 +304,14 @@
             const rememberMe = document.getElementById('rememberMe').checked;
 
             try {
-                console.log('Giriş denemesi:', { email });
-                
-                const response = await fetch('/api/login', {
+                // Login butonunu devre dışı bırak
+                const loginBtn = document.querySelector('.login-btn');
+                loginBtn.disabled = true;
+                loginBtn.innerHTML = '<span><i class="fas fa-spinner fa-spin me-2"></i>Giriş Yapılıyor...</span>';
+
+                console.log('Attempting login with:', { email }); // Şifreyi loglamıyoruz
+
+                const response = await fetch('http://localhost:3002/auth/login', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -315,29 +320,62 @@
                 });
 
                 const data = await response.json();
-                console.log('Sunucu yanıtı:', data);
-                
-                if (response.ok && data.user) {
-                    // Token ve kullanıcı bilgilerini sakla
+                console.log('Login response:', data);
+
+                if (response.ok) {
+                    // Token'ı localStorage'a kaydet
                     localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
                     
-                    alert('Giriş başarılı! Yönlendiriliyorsunuz...');
+                    // Kullanıcı bilgilerini localStorage'a kaydet
+                    localStorage.setItem('user', JSON.stringify(data.user));
+
+                    showAlert('success', 'Giriş başarılı! Yönlendiriliyorsunuz...');
                     
                     // Role göre yönlendirme
-                    if (data.user.role === 'admin') {
-                        window.location.href = '/admin/dashboard.html';
-                    } else {
-                        window.location.href = '/dashboard.html';
-                    }
+                    setTimeout(() => {
+                        if (data.user.role === 'admin') {
+                            window.location.href = 'http://localhost:3002/admin/dashboard.html';
+                        } else if (data.user.role === 'psychologist') {
+                            window.location.href = 'http://localhost:3002/psychologist/dashboard.html';
+                        } else if (data.user.role === 'client') {
+                            window.location.href = 'http://localhost:3002/client/dashboard.html';
+                        } else {
+                            window.location.href = 'http://localhost:3002/dashboard.html';
+                        }
+                    }, 1500);
                 } else {
-                    throw new Error(data.error || 'Giriş başarısız!');
+                    // Login butonunu tekrar aktif et
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<span><i class="fas fa-sign-in-alt me-2"></i>Giriş Yap</span>';
+                    
+                    showAlert('danger', data.error || 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.');
                 }
             } catch (error) {
                 console.error('Login error:', error);
-                alert(error.message || 'Bir hata oluştu, lütfen tekrar deneyin.');
+                // Login butonunu tekrar aktif et
+                const loginBtn = document.querySelector('.login-btn');
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<span><i class="fas fa-sign-in-alt me-2"></i>Giriş Yap</span>';
+                
+                showAlert('danger', 'Sunucuya bağlanılamıyor. Lütfen daha sonra tekrar deneyin.');
             }
         });
+
+        function showAlert(type, message) {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => alert.style.display = 'none');
+
+            const alert = document.querySelector(`.alert-${type}`);
+            if (alert) {
+                alert.querySelector('.alert-message').textContent = message;
+                alert.style.display = 'block';
+
+                // 5 saniye sonra alert'i gizle
+                setTimeout(() => {
+                    alert.style.display = 'none';
+                }, 5000);
+            }
+        }
     </script>
 </body>
 </html>

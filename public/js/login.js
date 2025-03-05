@@ -49,20 +49,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorAlert.textContent = 'Giriş başarılı! Yönlendiriliyorsunuz...';
                 errorAlert.style.display = 'block';
 
-                // Redirect based on role
+                // Redirect based on user role
                 setTimeout(() => {
-                    switch (data.user.role) {
-                        case 'admin':
-                            window.location.href = '/admin/dashboard';
-                            break;
-                        case 'therapist':
-                            window.location.href = '/therapist/dashboard';
-                            break;
-                        case 'client':
-                            window.location.href = '/client/dashboard';
-                            break;
-                        default:
-                            window.location.href = '/dashboard';
+                    const user = data.user;
+                    if (user.role === 'admin') {
+                        window.location.href = '/admin/dashboard.html';
+                    } else if (user.role === 'psychologist') {
+                        window.location.href = '/therapist/dashboard.html';
+                    } else {
+                        window.location.href = '/client/dashboard.html';
                     }
                 }, 1000);
             } else {

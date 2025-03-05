@@ -675,6 +675,24 @@
             box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
         }
 
+        .form-select-label {
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            padding: 0 0.5rem;
+            color: #6c757d;
+            transition: var(--transition);
+            pointer-events: none;
+            background: transparent;
+        }
+
+        .form-select:focus ~ .form-select-label,
+        .form-select:not([value=""]) ~ .form-select-label {
+            transform: translateY(-1.4rem) scale(0.85);
+            background: white;
+            color: var(--primary-color);
+        }
+
         .contact-submit-btn {
             background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
             border: none;
@@ -718,7 +736,6 @@
         .form-check-input {
             width: 1.25rem;
             height: 1.25rem;
-            margin-top: 0.2rem;
             border: 2px solid var(--gray-medium);
             cursor: pointer;
         }
@@ -777,6 +794,196 @@
             background: white;
             color: var(--primary-color);
         }
+
+        /* Quote Modal Styles */
+        .modal-header.bg-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-light)) !important;
+        }
+        
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            color: var(--primary-color);
+            opacity: 0.8;
+        }
+        
+        .form-floating > .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        #quoteModal .form-floating > .form-control,
+        #quoteModal .form-floating > .form-select {
+            background-color: white;
+            border: 1px solid var(--gray-medium);
+            border-radius: 8px;
+            padding: 1rem 1rem;
+            height: calc(3.5rem + 2px);
+            line-height: 1.25;
+        }
+
+        #quoteModal .form-floating > textarea.form-control {
+            height: 100px;
+            min-height: 100px;
+        }
+
+        #quoteModal .form-floating > .form-control:focus,
+        #quoteModal .form-floating > .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+        }
+
+        #quoteModal .form-floating > label {
+            padding: 1rem;
+            color: #6c757d;
+            opacity: 0.8;
+        }
+
+        #quoteModal .form-floating > .form-control:focus ~ label,
+        #quoteModal .form-floating > .form-control:not(:placeholder-shown) ~ label,
+        #quoteModal .form-floating > .form-select ~ label {
+            opacity: 1;
+            transform: scale(0.85) translateY(-1rem) translateX(0.15rem);
+            background-color: white;
+            padding: 0 0.5rem;
+            color: var(--primary-color);
+            height: auto;
+        }
+
+        #quoteModal .form-check-input {
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-top: 0.2rem;
+            border: 2px solid var(--gray-medium);
+            cursor: pointer;
+        }
+
+        #quoteModal .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        #quoteModal .form-check-label {
+            padding-left: 0.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        #quoteModal .btn-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+            border: none;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        #quoteModal .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.2);
+        }
+
+        /* Chatbot Styles */
+        #chatbot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        #chatToggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+
+        #chatToggle:hover {
+            transform: scale(1.1);
+        }
+
+        #chatWindow {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 9999;
+        }
+
+        .chat-header {
+            background: #0d6efd;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .chat-input button {
+            padding: 8px 16px;
+            background: #0d6efd;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            display: flex;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-content {
+            padding: 8px 12px;
+            border-radius: 15px;
+            max-width: 80%;
+            background: #f0f2f5;
+        }
+
+        .message.user .message-content {
+            background: #0d6efd;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -828,10 +1035,122 @@
                             <i class="fab fa-linkedin fa-lg"></i>
                         </a>
                     </li>
+                    <li class="nav-item ms-3">
+                        <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#quoteModal">
+                            <i class="fas fa-file-invoice me-2"></i> Teklif Al
+                        </button>
+                    </li>
                 </ul>
             </div>
         </div>
     </nav>
+
+    <!-- Quote Modal -->
+    <div class="modal fade" id="quoteModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-invoice me-2"></i>
+                        Ücretsiz Teklif Alın
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-4">Kurumsal çözümlerimiz hakkında detaylı bilgi ve fiyat teklifi almak için formu doldurun.</p>
+                    <form id="quoteForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="quoteCompanyName" name="companyName" placeholder=" " required>
+                                    <label for="quoteCompanyName">Şirket Adı</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="quoteEmployeeCount" name="employeeCount" placeholder=" " required>
+                                    <label for="quoteEmployeeCount">Çalışan Sayısı</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="quoteContactName" name="contactName" placeholder=" " required>
+                                    <label for="quoteContactName">İletişim Kişisi</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="tel" class="form-control" id="quotePhone" name="phone" placeholder=" ">
+                                    <label for="quotePhone">Telefon</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="quoteEmail" name="email" placeholder=" " required>
+                                    <label for="quoteEmail">E-posta</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-select-group">
+                                    <select class="form-select" id="quoteService" name="service" required>
+                                        <option value="" selected disabled>Seçiniz...</option>
+                                        <option value="eap">Çalışan Destek Programı</option>
+                                        <option value="vr">VR Terapi</option>
+                                        <option value="counseling">Psikolojik Danışmanlık</option>
+                                        <option value="workshop">Workshop & Eğitimler</option>
+                                        <option value="all">Tüm Hizmetler</option>
+                                    </select>
+                                    <label class="form-select-label" for="quoteService">İlgilendiğiniz Hizmet</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="quoteNotes" name="notes" placeholder=" " style="height: 100px"></textarea>
+                                    <label for="quoteNotes">Ek notlar veya sorularınız</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="quotePrivacy" required>
+                                    <label class="form-check-label text-muted" for="quotePrivacy">
+                                        Kişisel verilerimin işlenmesine izin veriyorum
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100 py-3">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    Teklif İste
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chatbot -->
+    <div id="chatbot">
+        <button id="chatToggle">
+            <i class="fas fa-comments"></i>
+        </button>
+        <div id="chatWindow">
+            <div class="chat-header">
+                <h5 class="m-0">VR Phobia Asistan</h5>
+                <button class="btn-close btn-close-white" id="chatClose"></button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will be added here -->
+            </div>
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Mesajınızı yazın...">
+                <button id="sendMessage">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Carousel -->
     <div id="mainCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
@@ -1411,6 +1730,129 @@
             } else {
                 navbar.classList.remove('scrolled');
             }
+        });
+        
+        // Quote Form Submission
+        document.getElementById('quoteForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); // Prevent form submission
+            
+            const form = e.target;
+            const button = form.querySelector('button[type="submit"]');
+            const originalText = button.innerHTML;
+            const modal = bootstrap.Modal.getInstance(document.getElementById('quoteModal'));
+            
+            try {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gönderiliyor...';
+                
+                const formData = {
+                    companyName: document.getElementById('quoteCompanyName').value,
+                    employeeCount: parseInt(document.getElementById('quoteEmployeeCount').value),
+                    contactName: document.getElementById('quoteContactName').value,
+                    phone: document.getElementById('quotePhone').value,
+                    email: document.getElementById('quoteEmail').value,
+                    service: document.getElementById('quoteService').value,
+                    notes: document.getElementById('quoteNotes').value
+                };
+                
+                const response = await fetch('/api/quote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Hide modal first
+                    modal.hide();
+                    
+                    // Then show success message
+                    setTimeout(() => {
+                        alert('Teklif talebiniz başarıyla alındı. En kısa sürede size dönüş yapacağız.');
+                        form.reset();
+                    }, 500);
+                } else {
+                    throw new Error(result.message || 'Bir hata oluştu');
+                }
+            } catch (error) {
+                alert('Teklif talebi gönderilemedi: ' + error.message);
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+        });
+        
+        // Chatbot functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get DOM elements
+            const chatToggle = document.getElementById('chatToggle');
+            const chatWindow = document.getElementById('chatWindow');
+            const chatClose = document.getElementById('chatClose');
+            const chatMessages = document.getElementById('chatMessages');
+            const messageInput = document.getElementById('messageInput');
+            const sendMessage = document.getElementById('sendMessage');
+
+            // Add welcome message
+            function addMessage(message, isUser = false) {
+                const div = document.createElement('div');
+                div.className = `message ${isUser ? 'user' : ''}`;
+                div.innerHTML = `<div class="message-content">${message}</div>`;
+                chatMessages.appendChild(div);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            // Add initial message
+            addMessage('Merhaba! 👋 Size nasıl yardımcı olabilirim?');
+
+            // Toggle chat window
+            chatToggle.onclick = function() {
+                chatWindow.style.display = chatWindow.style.display === 'none' || !chatWindow.style.display ? 'flex' : 'none';
+                if (chatWindow.style.display === 'flex') {
+                    messageInput.focus();
+                }
+            };
+
+            // Close chat window
+            chatClose.onclick = function() {
+                chatWindow.style.display = 'none';
+            };
+
+            // Send message
+            function sendUserMessage() {
+                const message = messageInput.value.trim();
+                if (message) {
+                    addMessage(message, true);
+                    messageInput.value = '';
+                    
+                    // Simple bot response
+                    setTimeout(() => {
+                        let response = 'Mesajınız için teşekkürler. Size en kısa sürede yardımcı olacağım.';
+                        
+                        if (message.toLowerCase().includes('merhaba') || message.toLowerCase().includes('selam')) {
+                            response = 'Merhaba! Size nasıl yardımcı olabilirim?';
+                        } else if (message.toLowerCase().includes('fiyat') || message.toLowerCase().includes('ücret')) {
+                            response = 'Fiyatlarımız hakkında bilgi almak için üst menüdeki "Teklif Al" butonunu kullanabilirsiniz.';
+                        } else if (message.toLowerCase().includes('iletişim')) {
+                            response = 'Bizimle kurumsal@vrphobia.net adresinden iletişime geçebilirsiniz.';
+                        }
+                        
+                        addMessage(response);
+                    }, 500);
+                }
+            }
+
+            // Send button click
+            sendMessage.onclick = sendUserMessage;
+
+            // Enter key press
+            messageInput.onkeypress = function(e) {
+                if (e.key === 'Enter') {
+                    sendUserMessage();
+                }
+            };
         });
     </script>
 </body>

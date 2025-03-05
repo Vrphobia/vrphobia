@@ -6,19 +6,1053 @@
     <title>VR PHOBIA | Kurumsal Çalışan Destek Programı</title>
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- AOS Animation -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="css/style.css" rel="stylesheet">
-    <link href="css/components.css" rel="stylesheet">
     <link href="css/splash.css" rel="stylesheet">
-    <link href="css/carousel.css" rel="stylesheet">
-    <link href="css/additional.css" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #0d6efd;
+            --primary-light: #0099ff;
+            --gray-light: #f8f9fa;
+            --gray-medium: #e9ecef;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+            --shadow-md: 0 5px 15px rgba(0,0,0,0.05);
+            --shadow-lg: 0 8px 20px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        /* Carousel Styles */
+        .carousel {
+            margin-top: 76px; /* Navbar yüksekliği kadar margin */
+        }
+        
+        .carousel-item {
+            height: calc(100vh - 76px); /* Viewport yüksekliğinden navbar'ı çıkar */
+            min-height: 500px;
+            position: relative;
+            width: 100%;
+        }
+
+        .carousel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Ekran boyutlarına göre responsive ayarlar */
+        @media (min-width: 1400px) {
+            .carousel-item {
+                height: 800px; /* Büyük ekranlar için sabit yükseklik */
+            }
+        }
+
+        @media (max-width: 992px) {
+            .carousel-item {
+                height: 600px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .carousel-item {
+                height: 500px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .carousel-item {
+                height: 400px;
+            }
+        }
+
+        /* Carousel kontrolleri */
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 10%;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 3;
+        }
+
+        .carousel:hover .carousel-control-prev,
+        .carousel:hover .carousel-control-next {
+            opacity: 0.8;
+        }
+
+        .carousel-indicators {
+            margin-bottom: 3rem;
+            z-index: 3;
+        }
+
+        .carousel-indicators button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin: 0 8px;
+            background-color: rgba(255,255,255,0.5);
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .carousel-indicators button.active {
+            background-color: var(--primary-color);
+            transform: scale(1.2);
+        }
+
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: white;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .navbar-brand img {
+            height: 40px;
+            width: auto;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .carousel-item {
+                height: 60vh;
+                min-height: 400px;
+            }
+        }
+
+        /* Animation Styles */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        
+        .fade-in-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Progress Circle */
+        .progress-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .progress-circle::after {
+            content: "";
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        .progress-percentage {
+            position: relative;
+            z-index: 1;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+
+        /* Card Styles */
+        .animated-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .animated-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: #0d6efd;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .animated-card:hover .card-icon {
+            transform: scale(1.2);
+        }
+
+        /* Feature Box Animations */
+        .feature-box {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            background: white;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(13, 110, 253, 0.1), rgba(13, 110, 253, 0));
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .feature-box:hover::before {
+            transform: translateX(0);
+        }
+
+        .feature-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            color: #0d6efd;
+            margin-bottom: 1.5rem;
+            transform: scale(1);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-box:hover .feature-icon {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background: linear-gradient(120deg, #0d6efd, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .feature-box.fade-in-visible .feature-title {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-text {
+            color: #6c757d;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease 0.2s;
+        }
+
+        .feature-box.fade-in-visible .feature-text {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-stat {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #0d6efd;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease 0.4s;
+        }
+
+        .feature-box.fade-in-visible .feature-stat {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(45deg, #0d6efd, #0099ff);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.6s ease 0.6s;
+        }
+
+        .feature-box.fade-in-visible .feature-badge {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* ROI Section Styles */
+        .roi-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .roi-card::after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(13, 110, 253, 0.1), rgba(13, 110, 253, 0));
+            transform: rotate(45deg);
+            top: -50%;
+            left: -50%;
+            transition: all 0.8s ease;
+            z-index: 1;
+        }
+
+        .roi-card:hover::after {
+            transform: rotate(45deg) translate(0, -100%);
+        }
+
+        .roi-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        .roi-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(120deg, #0d6efd, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .roi-card.fade-in-visible .roi-number {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .roi-label {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease 0.2s;
+            position: relative;
+            z-index: 2;
+        }
+
+        .roi-card.fade-in-visible .roi-label {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .roi-detail {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateX(-20px);
+            transition: all 0.6s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .roi-card.fade-in-visible .roi-detail {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .roi-detail:nth-child(3) { transition-delay: 0.2s; }
+        .roi-detail:nth-child(4) { transition-delay: 0.4s; }
+        .roi-detail:nth-child(5) { transition-delay: 0.6s; }
+
+        .roi-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(45deg, #0d6efd, #0099ff);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .roi-chart {
+            position: relative;
+            z-index: 2;
+            opacity: 0;
+            transform: scale(0.9);
+            transition: all 0.6s ease 0.4s;
+        }
+
+        .roi-card.fade-in-visible .roi-chart {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Reference Logo Style */
+        .reference-section {
+            padding: 4rem 0;
+            background: #f8f9fa;
+        }
+
+        .reference-logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            height: 150px; /* Sabit yükseklik */
+        }
+
+        .reference-logo-container:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+        }
+
+        .reference-logo {
+            max-width: 100%;
+            max-height: 100%;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            filter: grayscale(100%);
+            opacity: 0.7;
+            transition: all 0.4s ease;
+        }
+
+        .reference-logo-container:hover .reference-logo {
+            filter: grayscale(0%);
+            opacity: 1;
+        }
+
+        /* Features Animation */
+        .feature-icon-box {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            background: linear-gradient(45deg, #0d6efd20, #0d6efd10);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-icon-box::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #0d6efd40, #0d6efd20);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .feature-icon-box:hover::before {
+            transform: translateX(0);
+        }
+
+        .feature-icon-box i {
+            font-size: 2rem;
+            color: #0d6efd;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Process Steps */
+        .process-step {
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        .process-step.fade-in-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .process-step::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: -20px;
+            width: 2px;
+            background: #dee2e6;
+        }
+
+        .process-step:last-child::before {
+            display: none;
+        }
+
+        .process-number {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #0d6efd;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Contact Section Styles */
+        .contact-section {
+            position: relative;
+            padding: 5rem 0;
+            background: var(--gray-light);
+        }
+
+        .contact-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+            background: white;
+            z-index: 0;
+        }
+
+        .contact-section .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-info-box {
+            padding: 2rem;
+            border-radius: 15px;
+            background: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .contact-info-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 10px;
+            background: var(--gray-light);
+            transition: var(--transition);
+        }
+
+        .contact-info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .contact-info-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .contact-icon {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+            color: white;
+            border-radius: 10px;
+            margin-right: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .contact-form {
+            padding: 2.5rem;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .form-floating {
+            margin-bottom: 1rem;
+        }
+
+        .form-control {
+            border: 2px solid var(--gray-medium);
+            padding: 0.75rem 1rem;
+            height: calc(3.5rem + 2px);
+            line-height: 1.25;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: none;
+        }
+
+        .form-floating label {
+            padding: 1rem;
+        }
+
+        .form-floating textarea.form-control {
+            height: 150px;
+        }
+
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            transform: scale(0.85) translateY(-0.5rem) translateX(0.15rem);
+            background: white;
+            padding: 0 0.5rem;
+        }
+
+        .submit-btn {
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: var(--transition);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.2);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .contact-section::before {
+                display: none;
+            }
+
+            .contact-form,
+            .contact-info-box {
+                margin-bottom: 2rem;
+            }
+        }
+
+        /* Contact Form Styles */
+        .contact-form-section {
+            position: relative;
+            padding: 3rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .contact-form-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+            border-radius: 50%;
+            transform: translate(50%, -50%);
+            opacity: 0.1;
+        }
+
+        .contact-form-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(45deg, var(--primary-light), var(--primary-color));
+            border-radius: 50%;
+            transform: translate(-30%, 30%);
+            opacity: 0.1;
+        }
+
+        .form-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            background: var(--gray-light);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            background: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+        }
+
+        .form-label {
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            padding: 0 0.5rem;
+            color: #6c757d;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .form-control:focus ~ .form-label,
+        .form-control:not(:placeholder-shown) ~ .form-label {
+            transform: translateY(-1.4rem) scale(0.85);
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .form-select {
+            background-color: var(--gray-light);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            height: auto;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            background: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+        }
+
+        .form-select-label {
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            padding: 0 0.5rem;
+            color: #6c757d;
+            transition: var(--transition);
+            pointer-events: none;
+            background: transparent;
+        }
+
+        .form-select:focus ~ .form-select-label,
+        .form-select:not([value=""]) ~ .form-select-label {
+            transform: translateY(-1.4rem) scale(0.85);
+            background: white;
+            color: var(--primary-color);
+        }
+
+        .contact-submit-btn {
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-light));
+            border: none;
+            border-radius: 10px;
+            padding: 1rem 2rem;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary-light), var(--primary-color));
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .contact-submit-btn:hover::before {
+            opacity: 1;
+        }
+
+        .contact-submit-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .contact-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+        }
+
+        .form-check-input {
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-top: 0.2rem;
+            border: 2px solid var(--gray-medium);
+            cursor: pointer;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .form-check-label {
+            padding-left: 0.5rem;
+            cursor: pointer;
+        }
+
+        /* Form Select Styles */
+        .form-select-group {
+            position: relative;
+        }
+
+        .form-select {
+            background-color: var(--gray-light);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            height: auto;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1.25rem center;
+            background-size: 16px 12px;
+        }
+
+        .form-select:focus {
+            background: white;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+        }
+
+        .form-select-label {
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+            padding: 0 0.5rem;
+            color: #6c757d;
+            transition: var(--transition);
+            pointer-events: none;
+            background: transparent;
+        }
+
+        .form-select:focus ~ .form-select-label,
+        .form-select:not([value=""]) ~ .form-select-label {
+            transform: translateY(-1.4rem) scale(0.85);
+            background: white;
+            color: var(--primary-color);
+        }
+
+        /* Carousel Styles */
+        #mainCarousel {
+            position: relative;
+            width: 100%;
+            max-width: 1708px;
+            height: 480px;
+            margin: 76px auto 0;
+            overflow: hidden;
+        }
+        
+        #mainCarousel .carousel-inner {
+            height: 100%;
+        }
+        
+        #mainCarousel .carousel-item {
+            height: 100%;
+        }
+        
+        #mainCarousel .carousel-item img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+        
+        #mainCarousel .carousel-caption {
+            text-align: left;
+            left: 10%;
+            right: 10%;
+            bottom: 50%;
+            transform: translateY(50%);
+            max-width: 600px;
+        }
+        
+        /* Mobil için carousel ayarları */
+        @media (max-width: 768px) {
+            #mainCarousel {
+                height: 300px;
+                margin-top: 56px;
+            }
+            
+            #mainCarousel .carousel-inner {
+                height: 100%;
+            }
+        }
+
+        /* Güncel Haberler Stilleri */
+        .news-section {
+            background-color: #f8f9fa;
+        }
+
+        .news-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .news-image {
+            position: relative;
+            overflow: hidden;
+            height: 200px;
+        }
+
+        .news-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .news-card:hover .news-image img {
+            transform: scale(1.05);
+        }
+
+        .news-tag {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .news-title {
+            font-weight: 600;
+            line-height: 1.4;
+            color: #2d3436;
+        }
+
+        .news-excerpt {
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .news-meta {
+            font-size: 0.85rem;
+        }
+
+        .news-date, .news-read-time {
+            color: #6c757d;
+        }
+
+        /* Mobil için haberler ayarları */
+        @media (max-width: 768px) {
+            .news-image {
+                height: 180px;
+            }
+
+            .news-title {
+                font-size: 1.1rem;
+            }
+
+            .news-excerpt {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* SSS Styles */
+        .faq-section {
+            background-color: #f8f9fa;
+        }
+
+        .accordion-item {
+            border: none;
+            margin-bottom: 1rem;
+            border-radius: 10px !important;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .accordion-item:hover {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .accordion-button {
+            font-weight: 600;
+            padding: 1.2rem;
+            background-color: white;
+            box-shadow: none !important;
+        }
+
+        .accordion-button:not(.collapsed) {
+            color: #0d6efd;
+            background-color: #f8f9fa;
+        }
+
+        .accordion-button::after {
+            background-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-body {
+            padding: 1.2rem;
+            background-color: #f8f9fa;
+        }
+
+        .accordion-body ul li {
+            margin-bottom: 0.8rem;
+            padding-left: 0.5rem;
+        }
+
+        .accordion-body .btn-primary {
+            transition: all 0.3s ease;
+        }
+
+        .accordion-body .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.3);
+        }
+    </style>
 </head>
 <body>
     <!-- Splash Screen -->
@@ -74,119 +1108,73 @@
         </div>
     </nav>
 
-    <style>
-        /* Navbar Styles */
-        .navbar {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            background: white;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .navbar-brand img {
-            height: 40px;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .carousel-item {
-                height: 60vh;
-                min-height: 400px;
-            }
-        }
-    </style>
-
     <!-- Main Carousel -->
     <div id="mainCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+        </div>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <a href="employee-support-program.html" class="carousel-link" data-title="Kurumsal Çalışan Destek Programı">
-                    <img src="assets/images/carousel/slide-görsel1.jpg" class="d-block w-100" alt="Kurumsal Çalışan Destek Programı">
-                    <div class="carousel-overlay"></div>
-                </a>
+                <img src="assets/images/carousel/slide1.jpg" class="d-block w-100 h-100 object-fit-cover" alt="VR Teknolojisi">
             </div>
             <div class="carousel-item">
-                <a href="employee-support-program.html#services" class="carousel-link" data-title="Çalışan Destek Hizmetleri">
-                    <img src="assets/images/carousel/slide-görsel2.jpg" class="d-block w-100" alt="Çalışan Destek Hizmetleri">
-                    <div class="carousel-overlay"></div>
-                </a>
+                <img src="assets/images/carousel/slide2.jpg" class="d-block w-100 h-100 object-fit-cover" alt="Güvenli Ortam">
             </div>
             <div class="carousel-item">
-                <a href="employee-support-program.html#mental-health" class="carousel-link" data-title="Mental Sağlık Çözümleri">
-                    <img src="assets/images/carousel/slide görsel3.jpg" class="d-block w-100" alt="Mental Sağlık Çözümleri">
-                    <div class="carousel-overlay"></div>
-                </a>
+                <img src="assets/images/carousel/slide3.jpg" class="d-block w-100 h-100 object-fit-cover" alt="Uzman Psikolog">
             </div>
             <div class="carousel-item">
-                <a href="employee-support-program.html#contact" class="carousel-link" data-title="Kurumsal İletişim">
-                    <img src="assets/images/carousel/slide-görsel4.jpg" class="d-block w-100" alt="Kurumsal İletişim">
-                    <div class="carousel-overlay"></div>
-                </a>
+                <img src="assets/images/carousel/slide4.jpg" class="d-block w-100 h-100 object-fit-cover" alt="Kurumsal Çözümler">
             </div>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="carousel-control-prev-icon"></span>
             <span class="visually-hidden">Önceki</span>
         </button>
         <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="carousel-control-next-icon"></span>
             <span class="visually-hidden">Sonraki</span>
         </button>
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="2"></button>
-            <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="3"></button>
-        </div>
     </div>
 
     <!-- Benefits Section -->
     <section id="benefits" class="py-5 bg-light">
         <div class="container">
-            <h2 class="text-center fw-bold mb-5">Neden VR PHOBIA?</h2>
+            <h2 class="text-center fw-bold mb-5 fade-in">Neden VR PHOBIA?</h2>
             <div class="row g-4">
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="benefits-card card h-100">
-                        <div class="card-body text-center p-4">
-                            <i class="fas fa-chart-line benefits-icon"></i>
-                            <h3 class="h5 fw-bold">Verimlilik Artışı</h3>
-                            <p>Çalışanların mental sağlığının iyileşmesiyle %30'a varan verimlilik artışı</p>
-                            <ul class="list-unstyled text-start">
-                                <li><i class="fas fa-check text-success me-2"></i>Daha az devamsızlık</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Artan motivasyon</li>
-                                <li><i class="fas fa-check text-success me-2"></i>İyileştirilmiş performans</li>
-                            </ul>
-                        </div>
+                <div class="col-md-4">
+                    <div class="feature-box fade-in">
+                        <span class="feature-badge">Yenilikçi Tedavi</span>
+                        <i class="fas fa-vr-cardboard feature-icon"></i>
+                        <h3 class="feature-title">VR Teknolojisi</h3>
+                        <p class="feature-text">En son teknoloji VR ekipmanları ile güvenli ve kontrollü bir ortamda fobi tedavisi. Gerçekçi simülasyonlar ile kademeli maruz bırakma terapisi.</p>
+                        <div class="feature-stat"><span data-counter="94">0</span>%</div>
+                        <p class="text-muted">Tedavi başarı oranı</p>
                     </div>
                 </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="benefits-card card h-100">
-                        <div class="card-body text-center p-4">
-                            <i class="fas fa-brain benefits-icon"></i>
-                            <h3 class="h5 fw-bold">Mental Sağlık</h3>
-                            <p>Bilimsel olarak kanıtlanmış VR terapi yöntemleriyle etkili tedavi</p>
-                            <ul class="list-unstyled text-start">
-                                <li><i class="fas fa-check text-success me-2"></i>Stres yönetimi</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Anksiyete tedavisi</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Fobi tedavisi</li>
-                            </ul>
-                        </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-box fade-in">
+                        <span class="feature-badge">Uzman Kadro</span>
+                        <i class="fas fa-user-md feature-icon"></i>
+                        <h3 class="feature-title">Deneyimli Ekip</h3>
+                        <p class="feature-text">Alanında uzman psikologlarımız ile kişiye özel tedavi planı. Online ve yüz yüze terapi seçenekleri ile size en uygun çözüm.</p>
+                        <div class="feature-stat"><span data-counter="15">0</span>+</div>
+                        <p class="text-muted">Yıllık deneyim</p>
                     </div>
                 </div>
-                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="benefits-card card h-100">
-                        <div class="card-body text-center p-4">
-                            <i class="fas fa-shield-alt benefits-icon"></i>
-                            <h3 class="h5 fw-bold">Kurumsal Güven</h3>
-                            <p>Çalışanlarınıza verdiğiniz değeri gösterin</p>
-                            <ul class="list-unstyled text-start">
-                                <li><i class="fas fa-check text-success me-2"></i>Güçlü şirket kültürü</li>
-                                <li><i class="fas fa-check text-success me-2"></i>Artan bağlılık</li>
-                                <li><i class="fas fa-check text-success me-2"></i>İyileştirilmiş imaj</li>
-                            </ul>
-                        </div>
+                
+                <div class="col-md-4">
+                    <div class="feature-box fade-in">
+                        <span class="feature-badge">Kanıtlanmış Sonuç</span>
+                        <i class="fas fa-chart-line feature-icon"></i>
+                        <h3 class="feature-title">Ölçülebilir İlerleme</h3>
+                        <p class="feature-text">Her seansta kaydedilen ilerlemenizi grafikler ve detaylı raporlar ile takip edin. Bilimsel verilerle desteklenen tedavi süreci.</p>
+                        <div class="feature-stat"><span data-counter="89">0</span>%</div>
+                        <p class="text-muted">Hasta memnuniyeti</p>
                     </div>
                 </div>
             </div>
@@ -197,24 +1185,72 @@
     <section class="py-5">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-lg-6" data-aos="fade-right">
-                    <h2 class="fw-bold mb-4">Yatırımınızın Geri Dönüşü</h2>
-                    <p class="lead mb-4">Çalışan destek programımız, şirketinize somut faydalar sağlar:</p>
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="display-4 text-primary fw-bold me-3">92%</div>
-                        <div>çalışan memnuniyetinde artış</div>
+                <div class="col-lg-6">
+                    <h2 class="fw-bold mb-5">Yatırımınızın Geri Dönüşü</h2>
+                    <div class="mb-4 fade-in">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="display-3 fw-bold text-primary me-3">
+                                <span data-counter="300">0</span>%
+                            </div>
+                            <div class="h5 mb-0">Ortalama yatırım getirisi</div>
+                        </div>
                     </div>
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="display-4 text-primary fw-bold me-3">45%</div>
-                        <div>devamsızlıkta azalma</div>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <div class="display-4 text-primary fw-bold me-3">3x</div>
-                        <div>yatırım getirisi</div>
+                    <div class="fade-in">
+                        <div class="d-flex align-items-center mb-4 ps-4 position-relative">
+                            <div class="h2 text-primary fw-bold mb-0 me-3">
+                                <span data-counter="40">0</span>%
+                            </div>
+                            <div class="h6 mb-0">Çalışan verimliliğinde artış</div>
+                            <div class="position-absolute start-0 top-50 translate-middle-y">
+                                <i class="fas fa-arrow-trend-up text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-4 ps-4 position-relative">
+                            <div class="h2 text-primary fw-bold mb-0 me-3">
+                                <span data-counter="25">0</span>%
+                            </div>
+                            <div class="h6 mb-0">İşe devamsızlıkta azalma</div>
+                            <div class="position-absolute start-0 top-50 translate-middle-y">
+                                <i class="fas fa-arrow-trend-down text-primary"></i>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center ps-4 position-relative">
+                            <div class="h2 text-primary fw-bold mb-0 me-3">
+                                <span data-counter="60">0</span>%
+                            </div>
+                            <div class="h6 mb-0">Çalışan bağlılığında artış</div>
+                            <div class="position-absolute start-0 top-50 translate-middle-y">
+                                <i class="fas fa-heart text-primary"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="col-lg-6" data-aos="fade-left">
-                    <img src="assets/images/roi-graph.png" alt="ROI Graph" class="img-fluid rounded shadow">
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-sm fade-in">
+                        <div class="card-body p-4">
+                            <div class="mb-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-chart-line text-primary me-3 fa-2x"></i>
+                                    <h3 class="h5 mb-0">Ölçülebilir Sonuçlar</h3>
+                                </div>
+                                <p class="text-muted mb-0">Yatırımınızın somut getirilerini düzenli raporlarla takip edin.</p>
+                            </div>
+                            <div class="mb-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-clock text-primary me-3 fa-2x"></i>
+                                    <h3 class="h5 mb-0">Hızlı Geri Dönüş</h3>
+                                </div>
+                                <p class="text-muted mb-0">İlk 3 ay içinde gözle görülür iyileşme ve verimlilik artışı.</p>
+                            </div>
+                            <div>
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="fas fa-shield-alt text-primary me-3 fa-2x"></i>
+                                    <h3 class="h5 mb-0">Güvenilir Yatırım</h3>
+                                </div>
+                                <p class="text-muted mb-0">Kanıtlanmış metodlar ve bilimsel verilerle desteklenen sonuçlar.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -223,35 +1259,35 @@
     <!-- Features Grid -->
     <section class="py-5 bg-light">
         <div class="container">
-            <h2 class="text-center fw-bold mb-5">Programımızın Özellikleri</h2>
+            <h2 class="text-center fw-bold mb-5 fade-in">Programımızın Özellikleri</h2>
             <div class="row g-4">
-                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="card h-100 border-0 shadow-sm">
+                <div class="col-md-6 col-lg-4">
+                    <div class="animated-card card h-100 border-0 shadow-sm">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
-                                <i class="fas fa-vr-cardboard text-primary fs-1 me-3"></i>
+                                <i class="fas fa-vr-cardboard card-icon me-3"></i>
                                 <h3 class="h5 fw-bold mb-0">VR Terapi Seansları</h3>
                             </div>
                             <p class="text-muted mb-0">En son teknoloji ile güvenli ve etkili fobi tedavisi</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="card h-100 border-0 shadow-sm">
+                <div class="col-md-6 col-lg-4">
+                    <div class="animated-card card h-100 border-0 shadow-sm">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
-                                <i class="fas fa-user-md text-primary fs-1 me-3"></i>
+                                <i class="fas fa-user-md card-icon me-3"></i>
                                 <h3 class="h5 fw-bold mb-0">Uzman Psikologlar</h3>
                             </div>
                             <p class="text-muted mb-0">Alanında uzman psikologlarla online görüşme imkanı</p>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="card h-100 border-0 shadow-sm">
+                <div class="col-md-6 col-lg-4">
+                    <div class="animated-card card h-100 border-0 shadow-sm">
                         <div class="card-body">
                             <div class="d-flex align-items-center mb-3">
-                                <i class="fas fa-chart-pie text-primary fs-1 me-3"></i>
+                                <i class="fas fa-chart-pie card-icon me-3"></i>
                                 <h3 class="h5 fw-bold mb-0">İlerleme Takibi</h3>
                             </div>
                             <p class="text-muted mb-0">Detaylı raporlar ve analitik dashboard</p>
@@ -263,62 +1299,227 @@
     </section>
 
     <!-- Statistics Section -->
-    <section class="container py-5">
-        <div class="row g-4">
-            <div class="col-md-3">
-                <div class="counter-wrapper" data-aos="fade-up">
-                    <div class="counter-value" data-target="5000">0</div>
-                    <div class="counter-label">Mutlu Çalışan</div>
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-5 fade-in">İstatistikler</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="animated-card card fade-in">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-users card-icon"></i>
+                            <div class="progress-circle mx-auto mb-3" data-percentage="92">
+                                <span class="progress-percentage">0</span>
+                            </div>
+                            <h3 class="h5 fw-bold">Memnuniyet Oranı</h3>
+                            <p class="text-muted mb-0">Çalışan memnuniyeti</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="counter-wrapper" data-aos="fade-up" data-aos-delay="100">
-                    <div class="counter-value" data-target="150">0</div>
-                    <div class="counter-label">Kurumsal Müşteri</div>
+                
+                <div class="col-md-4">
+                    <div class="animated-card card fade-in">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-chart-line card-icon"></i>
+                            <div class="progress-circle mx-auto mb-3" data-percentage="85">
+                                <span class="progress-percentage">0</span>
+                            </div>
+                            <h3 class="h5 fw-bold">Başarı Oranı</h3>
+                            <p class="text-muted mb-0">Tedavi başarı oranı</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="counter-wrapper" data-aos="fade-up" data-aos-delay="200">
-                    <div class="counter-value" data-target="98" data-suffix="%">0%</div>
-                    <div class="counter-label">Memnuniyet Oranı</div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="counter-wrapper" data-aos="fade-up" data-aos-delay="300">
-                    <div class="counter-value" data-target="25">0</div>
-                    <div class="counter-label">Uzman Psikolog</div>
+                
+                <div class="col-md-4">
+                    <div class="animated-card card fade-in">
+                        <div class="card-body text-center p-4">
+                            <i class="fas fa-check-circle card-icon"></i>
+                            <div class="progress-circle mx-auto mb-3" data-percentage="78">
+                                <span class="progress-percentage">0</span>
+                            </div>
+                            <h3 class="h5 fw-bold">İyileşme Oranı</h3>
+                            <p class="text-muted mb-0">Ortalama iyileşme oranı</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Testimonials Section -->
-    <section class="bg-light py-5">
+    <!-- SSS Section -->
+    <section class="faq-section py-5">
         <div class="container">
-            <h2 class="text-center mb-5">Referanslarımız</h2>
-            <div class="row g-4 justify-content-center">
-                <div class="col-lg-4 col-md-6">
-                    <div class="testimonial-card" data-aos="fade-up">
-                        <img src="assets/images/client-logo-1.png" alt="Client Logo" class="client-logo mb-4">
-                        <p class="mb-4">"Çalışanlarımızın mental sağlığı bizim için çok önemli. Bu programla birlikte iş verimliliğimiz arttı."</p>
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <h5 class="mb-1">Ahmet Yılmaz</h5>
-                                <p class="text-muted mb-0">İK Direktörü, TechCorp</p>
+            <h2 class="text-center fw-bold mb-5">❓ Sıkça Sorulan Sorular</h2>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="accordion" id="faqAccordion">
+                        <!-- Soru 1 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                    1️⃣ Çalışan destek programları nasıl çalışır?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <ul class="list-unstyled">
+                                        <li>✅ VR teknolojisi ile güvenli bir ortamda tedavi sağlanır</li>
+                                        <li>✅ Uzman psikologlar eşliğinde seanslar düzenlenir</li>
+                                        <li>✅ İlerleme düzenli olarak takip edilir ve raporlanır</li>
+                                        <li>✅ Çalışanların gizliliği tamamen korunur</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Soru 2 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                    2️⃣ Şirket olarak sürece nasıl dahil olabilirim?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <ul class="list-unstyled">
+                                        <li>📋 Ücretsiz danışmanlık hizmetimizden faydalanın</li>
+                                        <li>📋 Şirketinize özel bir program oluşturalım</li>
+                                        <li>📋 Çalışanlarınız için özel seanslar planlayalım</li>
+                                        <li>📋 Düzenli raporlarla ilerlemeyi takip edin</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Soru 3 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                    3️⃣ Gizlilik nasıl sağlanıyor?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <ul class="list-unstyled">
+                                        <li>🔒 Tüm veriler şifrelenerek saklanır</li>
+                                        <li>🔒 Kişisel bilgiler kesinlikle paylaşılmaz</li>
+                                        <li>🔒 KVKK ve GDPR uyumlu süreçler</li>
+                                        <li>🔒 Güvenli ve izole terapi ortamı</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Soru 4 -->
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+                                    4️⃣ Ücretlendirme nasıl yapılıyor?
+                                </button>
+                            </h2>
+                            <div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    <ul class="list-unstyled">
+                                        <li>💰 Çalışan sayısına göre özel paketler</li>
+                                        <li>💰 Aylık veya yıllık ödeme seçenekleri</li>
+                                        <li>💰 Esnek ödeme planları</li>
+                                        <li>💰 Ücretsiz demo seansı imkanı</li>
+                                    </ul>
+                                    <div class="text-center mt-4">
+                                        <a href="#contact" class="btn btn-primary">Fiyat Teklifi Alın</a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="testimonial-card" data-aos="fade-up" data-aos-delay="100">
-                        <img src="assets/images/client-logo-2.png" alt="Client Logo" class="client-logo mb-4">
-                        <p class="mb-4">"VR terapi seansları ile çalışanlarımız fobilerinden kurtuldu ve daha mutlu bir çalışma ortamı oluştu."</p>
-                        <div class="d-flex align-items-center">
-                            <div>
-                                <h5 class="mb-1">Ayşe Kaya</h5>
-                                <p class="text-muted mb-0">CEO, InnovateTR</p>
-                            </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="py-5">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-5">Nasıl Çalışıyoruz?</h2>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <!-- Step 1 -->
+                    <div class="d-flex align-items-start mb-5 fade-in">
+                        <div class="d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: #0d6efd; color: white; border-radius: 50%; flex-shrink: 0;">
+                            <span class="fw-bold">1</span>
                         </div>
+                        <div class="ms-4">
+                            <h3 class="h5 fw-bold mb-3">Ücretsiz Danışmanlık</h3>
+                            <p class="text-muted mb-0">Kurumunuzun ihtiyaçlarını analiz ediyor, size özel çözümler sunuyoruz.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="d-flex align-items-start mb-5 fade-in">
+                        <div class="d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: #0d6efd; color: white; border-radius: 50%; flex-shrink: 0;">
+                            <span class="fw-bold">2</span>
+                        </div>
+                        <div class="ms-4">
+                            <h3 class="h5 fw-bold mb-3">Kişiselleştirilmiş Plan</h3>
+                            <p class="text-muted mb-0">Şirketinize ve çalışanlarınıza özel tedavi planı oluşturuyoruz.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="d-flex align-items-start mb-5 fade-in">
+                        <div class="d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: #0d6efd; color: white; border-radius: 50%; flex-shrink: 0;">
+                            <span class="fw-bold">3</span>
+                        </div>
+                        <div class="ms-4">
+                            <h3 class="h5 fw-bold mb-3">VR Terapi Seansları</h3>
+                            <p class="text-muted mb-0">En son teknoloji VR ekipmanları ile güvenli ve etkili tedavi sağlıyoruz.</p>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="d-flex align-items-start fade-in">
+                        <div class="d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; background: #0d6efd; color: white; border-radius: 50%; flex-shrink: 0;">
+                            <span class="fw-bold">4</span>
+                        </div>
+                        <div class="ms-4">
+                            <h3 class="h5 fw-bold mb-3">Sürekli Takip</h3>
+                            <p class="text-muted mb-0">İlerlemeyi düzenli raporlarla takip ediyor, sonuçları ölçümlüyoruz.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center fw-bold mb-5 fade-in">Neden Bizi Tercih Etmelisiniz?</h2>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="text-center fade-in">
+                        <div class="feature-icon-box mx-auto">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="h5 fw-bold mb-3">Güvenli Tedavi</h3>
+                        <p class="text-muted">Kontrollü ortamda, uzman gözetiminde VR terapi deneyimi</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center fade-in">
+                        <div class="feature-icon-box mx-auto">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="h5 fw-bold mb-3">Ölçülebilir Sonuçlar</h3>
+                        <p class="text-muted">Detaylı raporlama ve analitik dashboard ile ilerleme takibi</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center fade-in">
+                        <div class="feature-icon-box mx-auto">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="h5 fw-bold mb-3">Uzman Kadro</h3>
+                        <p class="text-muted">Alanında deneyimli psikologlar ile profesyonel destek</p>
                     </div>
                 </div>
             </div>
@@ -330,10 +1531,12 @@
         <h2 class="text-center mb-5">Güncel Haberler</h2>
         <div class="row g-4">
             <div class="col-lg-4 col-md-6">
-                <div class="card news-card" data-aos="fade-up">
-                    <img src="assets/images/news-1.jpg" alt="News Image" class="news-image">
-                    <span class="news-tag">Yeni</span>
-                    <div class="card-body">
+                <div class="news-card h-100">
+                    <div class="news-image">
+                        <img src="https://placehold.co/600x400/0d6efd/white?text=Mental+Sağlık+Semineri" alt="Mental Sağlık Semineri">
+                        <span class="news-tag bg-primary">Etkinlik</span>
+                    </div>
+                    <div class="card-body p-4">
                         <p class="news-date">13 Şubat 2025</p>
                         <h5 class="card-title">VR Terapi Teknolojimiz Güncellendi</h5>
                         <p class="card-text">En son teknoloji ile donatılmış VR terapi sistemimiz artık daha gerçekçi ve etkili.</p>
@@ -342,9 +1545,12 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="card news-card" data-aos="fade-up" data-aos-delay="100">
-                    <img src="assets/images/news-2.jpg" alt="News Image" class="news-image">
-                    <div class="card-body">
+                <div class="news-card h-100">
+                    <div class="news-image">
+                        <img src="https://placehold.co/600x400/198754/white?text=VR+Terapi+Yenilikleri" alt="VR Terapi Yenilikleri">
+                        <span class="news-tag bg-success">Yeni Özellik</span>
+                    </div>
+                    <div class="card-body p-4">
                         <p class="news-date">10 Şubat 2025</p>
                         <h5 class="card-title">Yeni Kurumsal Paketlerimiz</h5>
                         <p class="card-text">Şirketinize özel hazırlanmış destek programlarımızı keşfedin.</p>
@@ -353,12 +1559,15 @@
                 </div>
             </div>
             <div class="col-lg-4 col-md-6">
-                <div class="card news-card" data-aos="fade-up" data-aos-delay="200">
-                    <img src="assets/images/news-3.jpg" alt="News Image" class="news-image">
-                    <div class="card-body">
+                <div class="news-card h-100">
+                    <div class="news-image">
+                        <img src="https://placehold.co/600x400/0dcaf0/white?text=Mobil+Uygulama" alt="Mobil Uygulama">
+                        <span class="news-tag bg-info">Duyuru</span>
+                    </div>
+                    <div class="card-body p-4">
                         <p class="news-date">5 Şubat 2025</p>
                         <h5 class="card-title">Mental Sağlık Seminerleri</h5>
-                        <p class="card-text">Ücretsiz online seminerlerimize katılarak mental sağlık hakkında bilgi edinin.</p>
+                        <p class="text-muted mb-0">Ücretsiz online seminerlerimize katılarak mental sağlık hakkında bilgi edinin.</p>
                         <a href="#" class="btn btn-outline-primary">Devamını Oku</a>
                     </div>
                 </div>
@@ -367,103 +1576,142 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-5">
+    <section id="contact" class="contact-section">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8 col-lg-6">
-                    <div class="card border-0 shadow">
-                        <div class="card-body p-5">
-                            <h2 class="text-center fw-bold mb-4">Bizimle İletişime Geçin</h2>
-                            <form class="contact-form">
-                                <div class="mb-3">
-                                    <label class="form-label">Şirket Adı</label>
-                                    <input type="text" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">İletişim Kişisi</label>
-                                    <input type="text" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">E-posta</label>
-                                    <input type="email" class="form-control" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Telefon</label>
-                                    <input type="tel" class="form-control" required>
-                                </div>
-                                <div class="mb-4">
-                                    <label class="form-label">Mesajınız</label>
-                                    <textarea class="form-control" rows="4" required></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100 btn-lg">
-                                    Ücretsiz Demo Talep Et
-                                    <i class="fas fa-arrow-right ms-2"></i>
-                                </button>
-                            </form>
+            <div class="row g-4">
+                <div class="col-lg-5">
+                    <h2 class="fw-bold mb-4">İletişim Bilgileri</h2>
+                    <p class="text-muted mb-5">Kurumsal çözümlerimiz hakkında detaylı bilgi almak için bize ulaşın.</p>
+                    
+                    <div class="contact-info-box">
+                        <div class="contact-info-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Adres</h5>
+                                <p class="mb-0 text-muted">Nisbetiye Mahallesi Birlik Sokak No:3/17</p>
+                            </div>
                         </div>
+
+                        <div class="contact-info-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">Telefon</h5>
+                                <p class="mb-0">
+                                    <a href="tel:08503072039" class="text-muted text-decoration-none">0850 307 20 39</a>
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="contact-info-item">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div>
+                                <h5 class="fw-bold mb-1">E-posta</h5>
+                                <p class="mb-0">
+                                    <a href="mailto:kurumsal@vrphobia.net" class="text-muted text-decoration-none">kurumsal@vrphobia.net</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-7">
+                    <div class="contact-form-section">
+                        <h3 class="fw-bold mb-4">Bize Ulaşın</h3>
+                        <p class="text-muted mb-4">Kurumsal çözümlerimiz hakkında bilgi almak için formu doldurun, size en kısa sürede dönüş yapalım.</p>
+                        <form id="contactForm">
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="name" placeholder=" " required>
+                                        <label class="form-label" for="name">Adınız Soyadınız</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="email" class="form-control" id="email" placeholder=" " required>
+                                        <label class="form-label" for="email">E-posta Adresiniz</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="tel" class="form-control" id="phone" placeholder=" ">
+                                        <label class="form-label" for="phone">Telefon Numaranız</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control" id="company" placeholder=" ">
+                                        <label class="form-label" for="company">Şirket Adı</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-select-group">
+                                        <select class="form-select" id="subject" required>
+                                            <option value="" selected disabled>Seçiniz...</option>
+                                            <option value="kurumsal">Kurumsal Çözümler</option>
+                                            <option value="demo">Demo Talebi</option>
+                                            <option value="fiyat">Fiyat Bilgisi</option>
+                                            <option value="diger">Diğer</option>
+                                        </select>
+                                        <label class="form-select-label" for="subject">İlgilendiğiniz Konu</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <textarea class="form-control" id="message" rows="4" placeholder=" " required></textarea>
+                                        <label class="form-label" for="message">Mesajınız</label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="form-check mb-4">
+                                        <input class="form-check-input" type="checkbox" id="privacy" required>
+                                        <label class="form-check-label text-muted" for="privacy">
+                                            Kişisel verilerimin işlenmesine izin veriyorum
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="contact-submit-btn w-100">
+                                        <span>
+                                            <i class="fas fa-paper-plane me-2"></i>
+                                            Gönder
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Floating Contact Button -->
-    <a href="#contact" class="btn btn-primary btn-lg rounded-circle floating-contact" data-bs-toggle="tooltip" data-bs-placement="left" title="Bizimle İletişime Geçin">
-        <i class="fas fa-comments"></i>
-    </a>
-
-    <!-- Cookie Settings Modal -->
-    <div class="modal fade" id="cookieSettingsModal" tabindex="-1" aria-labelledby="cookieSettingsModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="cookieSettingsModalLabel">Çerez Ayarları</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+    <!-- Footer -->
+    <footer class="py-4 bg-dark text-white">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">&copy; 2025 VR PHOBIA. Tüm hakları saklıdır.</p>
                 </div>
-                <div class="modal-body">
-                    <p>Bu web sitesi, size en iyi deneyimi sunmak için çerezleri kullanır. Çerez ayarlarınızı buradan yönetebilirsiniz.</p>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="necessaryCookies" checked disabled>
-                        <label class="form-check-label" for="necessaryCookies">
-                            Gerekli Çerezler
-                        </label>
-                        <small class="d-block text-muted">Bu çerezler web sitesinin temel işlevleri için gereklidir ve devre dışı bırakılamaz.</small>
-                    </div>
-                    <div class="form-check form-switch mb-3">
-                        <input class="form-check-input" type="checkbox" id="analyticsCookies">
-                        <label class="form-check-label" for="analyticsCookies">
-                            Analitik Çerezler
-                        </label>
-                        <small class="d-block text-muted">Bu çerezler, web sitesi trafiğini analiz etmemize yardımcı olur.</small>
-                    </div>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="marketingCookies">
-                        <label class="form-check-label" for="marketingCookies">
-                            Pazarlama Çerezleri
-                        </label>
-                        <small class="d-block text-muted">Bu çerezler, size kişiselleştirilmiş reklamlar göstermek için kullanılır.</small>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
-                    <button type="button" class="btn btn-primary" id="saveCookieSettings">Ayarları Kaydet</button>
+                <div class="col-md-6 text-end">
+                    <a href="#" class="text-white me-3">Gizlilik Politikası</a>
+                    <a href="#" class="text-white">Kullanım Koşulları</a>
                 </div>
             </div>
         </div>
-    </div>
+    </footer>
 
     <!-- JavaScript Dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/animations.js"></script>
     <script src="js/splash.js"></script>
-    <script src="js/main.js"></script>
     <script>
-        // Initialize AOS
-        AOS.init({
-            duration: 800,
-            once: true
-        });
-
         // Initialize Counters
         const counterAnimation = () => {
             document.querySelectorAll('.counter-value').forEach(counter => {

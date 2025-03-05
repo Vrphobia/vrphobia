@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR PHOBIA | Kurumsal Çalışan Destek Programı</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/splash.css" rel="stylesheet">
+
+    <style>
+        /* Quote Modal Styles */
+        .modal-header.bg-primary {
+            background: linear-gradient(45deg, var(--primary-color), var(--primary-light)) !important;
+        }
+        
+        .form-floating > .form-control:focus ~ label,
+        .form-floating > .form-control:not(:placeholder-shown) ~ label {
+            color: var(--primary-color);
+            opacity: 0.8;
+        }
+        
+        .form-floating > .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <img src="assets/images/logo.png" alt="VR PHOBIA Logo" height="40">
+                <span class="ms-2 fw-bold text-primary">VR PHOBIA</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#benefits">Neden Biz?</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Özellikler</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">İletişim</a>
+                    </li>
+                </ul>
+                <button class="btn btn-primary rounded-pill px-4 py-2" data-bs-toggle="modal" data-bs-target="#quoteModal">
+                    <i class="fas fa-file-invoice me-2"></i> Teklif Al
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Quote Modal -->
+    <div class="modal fade" id="quoteModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-invoice me-2"></i>
+                        Ücretsiz Teklif Alın
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <p class="text-muted mb-4">Kurumsal çözümlerimiz hakkında detaylı bilgi ve fiyat teklifi almak için formu doldurun.</p>
+                    <form id="quoteForm">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="quoteCompanyName" name="companyName" placeholder=" " required>
+                                    <label for="quoteCompanyName">Şirket Adı</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="number" class="form-control" id="quoteEmployeeCount" name="employeeCount" placeholder=" " required>
+                                    <label for="quoteEmployeeCount">Çalışan Sayısı</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="quoteContactName" name="contactName" placeholder=" " required>
+                                    <label for="quoteContactName">İletişim Kişisi</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="tel" class="form-control" id="quotePhone" name="phone" placeholder=" " required>
+                                    <label for="quotePhone">Telefon</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <input type="email" class="form-control" id="quoteEmail" name="email" placeholder=" " required>
+                                    <label for="quoteEmail">E-posta</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <select class="form-select" id="quoteService" name="service" required>
+                                        <option value="" selected disabled>Seçiniz...</option>
+                                        <option value="vr">VR Terapi</option>
+                                        <option value="counseling">Psikolojik Danışmanlık</option>
+                                        <option value="workshop">Workshop & Eğitimler</option>
+                                        <option value="all">Tüm Hizmetler</option>
+                                    </select>
+                                    <label for="quoteService">İlgilendiğiniz Hizmet</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-floating">
+                                    <textarea class="form-control" id="quoteNotes" name="notes" placeholder=" " style="height: 100px"></textarea>
+                                    <label for="quoteNotes">Ek notlar veya sorularınız</label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="quotePrivacy" required>
+                                    <label class="form-check-label text-muted" for="quotePrivacy">
+                                        Kişisel verilerimin işlenmesine izin veriyorum
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary w-100 py-3">
+                                    <i class="fas fa-paper-plane me-2"></i>
+                                    Teklif İste
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Quote Form Submission
+        document.getElementById('quoteForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const form = e.target;
+            const button = form.querySelector('button[type="submit"]');
+            const originalText = button.innerHTML;
+            
+            try {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Gönderiliyor...';
+                
+                const formData = {
+                    companyName: document.getElementById('quoteCompanyName').value,
+                    employeeCount: parseInt(document.getElementById('quoteEmployeeCount').value),
+                    contactName: document.getElementById('quoteContactName').value,
+                    phone: document.getElementById('quotePhone').value,
+                    email: document.getElementById('quoteEmail').value,
+                    service: document.getElementById('quoteService').value,
+                    notes: document.getElementById('quoteNotes').value
+                };
+                
+                const response = await fetch('/api/quote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Teklif talebiniz başarıyla alındı. En kısa sürede size dönüş yapacağız.');
+                    form.reset();
+                    bootstrap.Modal.getInstance(document.getElementById('quoteModal')).hide();
+                } else {
+                    throw new Error(result.message || 'Bir hata oluştu');
+                }
+            } catch (error) {
+                alert('Teklif talebi gönderilemedi: ' + error.message);
+            } finally {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+        });
+    </script>
+</body>
+</html>

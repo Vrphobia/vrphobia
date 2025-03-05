@@ -1,309 +1,274 @@
-const express = require('express');
-const cors = require('cors');
-const path = require('path');
-const mysql = require('mysql2/promise');
-const bcrypt = require('bcrypt');
-const session = require('express-session');
-const fs = require('fs');
-const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
+const express = require('express');
 const app = express();
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const mysql = require('mysql2');
+const cors = require('cors');
+const nodemailer = require('nodemailer');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+
+// Import routes
+const authRoutes = require('./src/routes/auth');
+const adminRoutes = require('./src/routes/admin');
+const clientRoutes = require('./src/routes/clients');
+const therapistRoutes = require('./src/routes/therapists');
+const reportRoutes = require('./src/routes/reports');
+const appointmentRoutes = require('./src/routes/appointments');
+const progressRoutes = require('./src/routes/progress');
+const notificationRoutes = require('./src/routes/notifications');
+const fileRoutes = require('./src/routes/files');
+const { router: videoRoutes, handleSocket } = require('./src/routes/video');
+// const paymentRoutes = require('./src/routes/payments'); // Ödeme sistemini geçici olarak devre dışı bıraktım
+
 const port = 3002;
 
 // MySQL connection pool
 const pool = mysql.createPool({
-    host: 'localhost',
+    host: process.env.DB_HOST || 'localhost',
     port: 3306,
-    user: 'root',
-    password: 'Vrphobia123*',
+    user: process.env.DB_USER || 'vrphobia',
+    password: process.env.DB_PASSWORD || 'vrphobia123',
     database: 'employee_support_portal',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
+}).promise();
+
+// Debug için çevre değişkenlerini kontrol et
+console.log('MySQL Bağlantı Bilgileri:', {
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD ? '***' : 'undefined'
 });
 
+// Contact messages tablosunu oluştur
+const createTableQuery = `
+    CREATE TABLE IF NOT EXISTS contact_messages (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(100),
+        email VARCHAR(100),
+        phone VARCHAR(20),
+        company VARCHAR(100),
+        message TEXT,
+        status ENUM('new', 'read', 'replied') DEFAULT 'new',
+        ip_address VARCHAR(45),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+`;
+
+pool.query(createTableQuery)
+    .then(() => {
+        console.log('contact_messages tablosu hazır');
+    })
+    .catch((err) => {
+        console.error('Tablo oluşturma hatası:', err);
+    });
+
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+    cors: {
+        origin: process.env.CORS_ORIGIN || '*',
+        methods: ['GET', 'POST']
+    }
+});
+
+// Güvenlik başlıkları
+app.use((req, res, next) => {
+    res.setHeader('Content-Security-Policy', "default-src 'self' https://formsubmit.co; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; img-src 'self' data:;");
+    next();
+});
+
+// Security middleware
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
+
+const { authenticateToken } = require('./src/middleware/auth');
+const { 
+    limiter, 
+    sessionConfig, 
+    securityHeaders, 
+    corsOptions,
+    ipFilter,
+    sanitizeRequest 
+} = require('./src/middleware/security');
+
+// Security middleware
+app.use(securityHeaders);
+app.use(cors(corsOptions));
+app.use(limiter);
+app.use(ipFilter);
+app.use(sanitizeRequest);
+
 // Basic middleware
-app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.static('public'));
 
 // Session middleware
-app.use(session({
-    secret: 'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: false,
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000
-    }
-}));
-
-// Database middleware
 app.use((req, res, next) => {
     req.db = pool;
     next();
 });
 
-// Authentication middleware
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+// WebSocket yönetimi
+handleSocket(io);
 
-    if (!token) {
-        return res.status(401).json({ error: 'Authentication required' });
-    }
+// Routes
+app.use('/api', authRoutes);
+app.use('/api/admin', authenticateToken, adminRoutes);
+app.use('/api', authenticateToken, clientRoutes);
+app.use('/api/therapists', authenticateToken, therapistRoutes);
+app.use('/api/reports', authenticateToken, reportRoutes);
+app.use('/api/appointments', authenticateToken, appointmentRoutes);
+app.use('/api/progress', authenticateToken, progressRoutes);
+app.use('/api/notifications', authenticateToken, notificationRoutes);
+app.use('/api/files', authenticateToken, fileRoutes);
+app.use('/api/video', authenticateToken, videoRoutes);
+// app.use('/api/payments', paymentRoutes); // Ödeme sistemini geçici olarak devre dışı bıraktım
 
-    jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key', (err, user) => {
-        if (err) {
-            return res.status(403).json({ error: 'Invalid token' });
-        }
-        req.user = user;
-        next();
-    });
-};
+// Contact form endpoint'i
+app.post('/api/contact', async (req, res) => {
+    const { name, email, phone, company, message } = req.body;
+    const ip = req.ip;
 
-// Login endpoint
-app.post('/api/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
-        console.log('Login attempt:', { email });
+        // Mesajı veritabanına kaydet
+        const insertQuery = `
+            INSERT INTO contact_messages (name, email, phone, company, message, ip_address)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `;
+        
+        pool.query(insertQuery, [name, email, phone, company, message, ip])
+            .then((result) => {
+                // E-posta gönder
+                const transporter = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 587,
+                    secure: false,
+                    auth: {
+                        user: process.env.EMAIL_USER,
+                        pass: process.env.EMAIL_PASSWORD
+                    }
+                });
 
-        const [users] = await pool.execute(
-            'SELECT * FROM users WHERE email = ?',
-            [email]
-        );
+                const mailOptions = {
+                    from: process.env.EMAIL_USER,
+                    to: 'kurumsal@vrphobia.net',
+                    subject: 'Yeni İletişim Formu Mesajı',
+                    text: `
+                        Ad Soyad: ${name}
+                        E-posta: ${email}
+                        Telefon: ${phone}
+                        Şirket: ${company}
+                        Mesaj: ${message}
+                        IP: ${ip}
+                    `
+                };
 
-        if (users.length === 0) {
-            console.log('User not found:', email);
-            return res.status(401).json({ error: 'Geçersiz email adresi veya şifre' });
-        }
-
-        const user = users[0];
-        const validPassword = await bcrypt.compare(password, user.password);
-
-        if (!validPassword) {
-            console.log('Invalid password for user:', email);
-            return res.status(401).json({ error: 'Geçersiz email adresi veya şifre' });
-        }
-
-        const token = jwt.sign(
-            { id: user.id, email: user.email, role: user.role },
-            process.env.JWT_SECRET || 'your-secret-key',
-            { expiresIn: '24h' }
-        );
-
-        console.log('Login successful:', { email, role: user.role });
-        res.json({ 
-            token, 
-            user: { 
-                id: user.id, 
-                email: user.email, 
-                role: user.role,
-                name: user.name,
-                surname: user.surname
-            } 
-        });
+                transporter.sendMail(mailOptions)
+                    .then(() => {
+                        res.json({ success: true, message: 'Mesajınız başarıyla gönderildi' });
+                    })
+                    .catch((error) => {
+                        console.error('E-posta gönderme hatası:', error);
+                        res.status(500).json({ error: 'Mesajınız gönderilemedi' });
+                    });
+            })
+            .catch((err) => {
+                console.error('Veritabanı kayıt hatası:', err);
+                res.status(500).json({ error: 'Mesajınız kaydedilemedi' });
+            });
     } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('E-posta gönderme hatası:', error);
+        res.status(500).json({ error: 'Mesaj gönderilirken bir hata oluştu.' });
     }
 });
 
-// Test route
-app.get('/api/test', (req, res) => {
-    res.json({ message: 'API is working' });
+// E-posta gönderme için transporter oluştur
+const transporter = nodemailer.createTransport({
+    host: 'smtp.office365.com',
+    port: 587,
+    secure: false, // TLS için false
+    auth: {
+        user: 'your-email@yourcompany.com', // Kurumsal e-posta adresiniz
+        pass: 'your-password' // E-posta şifreniz
+    },
+    tls: {
+        ciphers: 'SSLv3'
+    }
 });
 
-// API Routes
-app.get('/api/therapists', authenticateToken, async (req, res) => {
+// İletişim formu endpoint'i
+app.post('/api/contact-old', async (req, res) => {
     try {
-        // Önce terapistleri al
-        const [therapists] = await pool.execute(`
-            SELECT DISTINCT u.id, u.name, u.surname, u.email, u.phone, u.role 
-            FROM users u 
-            WHERE u.role = 'psychologist' AND u.is_active = true
-        `);
+        const { name, email, phone, company, message } = req.body;
 
-        // Her terapist için uzmanlık alanlarını al
-        for (let therapist of therapists) {
-            const [specialties] = await pool.execute(`
-                SELECT tt.id, tt.name, tt.category
-                FROM therapy_types tt
-                JOIN therapist_specialties ts ON tt.id = ts.therapy_type_id
-                WHERE ts.therapist_id = ?
-            `, [therapist.id]);
-            
-            therapist.specialties = specialties;
-        }
+        // E-posta içeriğini oluştur
+        const mailOptions = {
+            from: 'your-email@yourcompany.com', // Kurumsal e-posta adresiniz
+            to: 'target-email@yourcompany.com', // Mesajların gönderileceği e-posta
+            subject: `Yeni İletişim Formu: ${company}`,
+            html: `
+                <h3>Yeni İletişim Formu Mesajı</h3>
+                <p><strong>İsim:</strong> ${name}</p>
+                <p><strong>E-posta:</strong> ${email}</p>
+                <p><strong>Telefon:</strong> ${phone}</p>
+                <p><strong>Şirket:</strong> ${company}</p>
+                <p><strong>Mesaj:</strong> ${message}</p>
+            `
+        };
 
-        res.json(therapists);
+        // E-postayı gönder
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: 'Mesajınız başarıyla gönderildi.' });
     } catch (error) {
-        console.error('Error fetching therapists:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('E-posta gönderme hatası:', error);
+        res.status(500).json({ error: 'Mesaj gönderilirken bir hata oluştu.' });
     }
 });
 
-app.get('/api/therapy-types', authenticateToken, async (req, res) => {
-    try {
-        const [rows] = await pool.execute('SELECT * FROM therapy_types');
-        res.json(rows);
-    } catch (error) {
-        console.error('Error fetching therapy types:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
+// Serve static files
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.get('/api/organizations', authenticateToken, async (req, res) => {
-    try {
-        const [rows] = await pool.execute('SELECT * FROM organizations');
-        res.json(rows);
-    } catch (error) {
-        console.error('Error fetching organizations:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'admin', 'dashboard.html'));
 });
 
-app.get('/api/organization-clients', authenticateToken, async (req, res) => {
-    try {
-        const [rows] = await pool.execute(`
-            SELECT oc.*, o.name as organization_name, u.name as therapist_name, u.surname as therapist_surname
-            FROM organization_clients oc
-            LEFT JOIN organizations o ON oc.organization_id = o.id
-            LEFT JOIN users u ON oc.assigned_therapist_id = u.id
-        `);
-        res.json(rows);
-    } catch (error) {
-        console.error('Error fetching organization clients:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-app.get('/api/individual-clients', authenticateToken, async (req, res) => {
-    try {
-        const [rows] = await pool.execute(`
-            SELECT 
-                ic.*,
-                tt.name as therapy_type,
-                CONCAT(u.name, ' ', u.surname) as therapist_name
-            FROM individual_clients ic
-            JOIN therapy_types tt ON ic.therapy_type_id = tt.id
-            JOIN users u ON ic.assigned_therapist_id = u.id
-        `);
-        res.json(rows);
-    } catch (error) {
-        console.error('Error fetching individual clients:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-app.get('/api/appointments', authenticateToken, async (req, res) => {
-    try {
-        const [rows] = await pool.execute(`
-            SELECT 
-                a.*,
-                tt.name as therapy_type,
-                CONCAT(u.name, ' ', u.surname) as therapist_name,
-                CASE 
-                    WHEN a.client_type = 'organization' THEN CONCAT(oc.name, ' ', oc.surname)
-                    ELSE CONCAT(ic.name, ' ', ic.surname)
-                END as client_name
-            FROM appointments a
-            JOIN therapy_types tt ON a.therapy_type_id = tt.id
-            JOIN users u ON a.psychologist_id = u.id
-            LEFT JOIN organization_clients oc ON a.client_type = 'organization' AND a.client_id = oc.id
-            LEFT JOIN individual_clients ic ON a.client_type = 'individual' AND a.client_id = ic.id
-            ORDER BY a.appointment_time DESC
-        `);
-        res.json(rows);
-    } catch (error) {
-        console.error('Error fetching appointments:', error);
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-
-// Kurumsal danışan ekleme
-app.post('/api/organization-clients', authenticateToken, async (req, res) => {
-    try {
-        const { 
-            organization_id,
-            name,
-            surname,
-            phone,
-            email,
-            client_type,
-            assigned_therapist_id
-        } = req.body;
-
-        // Organizasyonun kalan hak sayısını kontrol et
-        const [orgs] = await pool.execute(
-            'SELECT sessions_per_client FROM organizations WHERE id = ?',
-            [organization_id]
-        );
-
-        if (orgs.length === 0) {
-            return res.status(404).json({ error: 'Organizasyon bulunamadı' });
-        }
-
-        const remaining_sessions = orgs[0].sessions_per_client;
-
-        // Yeni danışanı ekle
-        const [result] = await pool.execute(`
-            INSERT INTO organization_clients 
-            (organization_id, name, surname, phone, email, client_type, 
-             remaining_sessions, assigned_therapist_id)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `, [
-            organization_id,
-            name,
-            surname,
-            phone,
-            email,
-            client_type,
-            remaining_sessions,
-            assigned_therapist_id
-        ]);
-
-        // Eklenen danışanın bilgilerini getir
-        const [client] = await pool.execute(
-            'SELECT * FROM organization_clients WHERE id = ?',
-            [result.insertId]
-        );
-
-        res.status(201).json(client[0]);
-    } catch (error) {
-        console.error('Error adding organization client:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-// Serve index.html for all other routes
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// Error handling
+// Error handling middleware
 app.use((err, req, res, next) => {
-    console.error('Error:', err);
-    res.status(500).json({ error: 'Server error', message: err.message });
+    console.error(err.stack);
+    res.status(500).json({ error: 'Something went wrong!' });
 });
 
-// Start server
 async function startServer() {
     try {
         // Test database connection
-        const connection = await pool.getConnection();
+        await pool.getConnection();
         console.log('Database connection successful');
-        connection.release();
 
-        // Start server
-        app.listen(port, () => {
+        // Start the server
+        httpServer.listen(port, () => {
             console.log(`Server is running on port ${port}`);
             console.log(`http://localhost:${port}`);
         });
     } catch (error) {
-        console.error('Server startup error:', error);
+        console.error('Error starting server:', error);
         process.exit(1);
     }
 }

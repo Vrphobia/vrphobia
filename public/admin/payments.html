@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ödeme Yönetimi - Admin Paneli</title>
+    <link rel="stylesheet" href="../css/admin.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-dark sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.html">
+                                <i class="bi bi-speedometer2"></i> Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="therapists.html">
+                                <i class="bi bi-people"></i> Terapistler
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="clients.html">
+                                <i class="bi bi-person"></i> Danışanlar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="payments.html">
+                                <i class="bi bi-credit-card"></i> Ödemeler
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="reports.html">
+                                <i class="bi bi-file-text"></i> Raporlar
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="settings.html">
+                                <i class="bi bi-gear"></i> Ayarlar
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Ana içerik -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Ödeme Yönetimi</h1>
+                </div>
+
+                <!-- Özet Kartları -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-white bg-primary">
+                            <div class="card-body">
+                                <h5 class="card-title">Toplam Gelir</h5>
+                                <h2 class="card-text" id="totalRevenue">₺0</h2>
+                                <small>Bu ay</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-success">
+                            <div class="card-body">
+                                <h5 class="card-title">Aktif Abonelikler</h5>
+                                <h2 class="card-text" id="activeSubscriptions">0</h2>
+                                <small>Toplam</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-info">
+                            <div class="card-body">
+                                <h5 class="card-title">Bekleyen Ödemeler</h5>
+                                <h2 class="card-text" id="pendingPayments">0</h2>
+                                <small>Son 30 gün</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card text-white bg-warning">
+                            <div class="card-body">
+                                <h5 class="card-title">İptal Edilen Abonelikler</h5>
+                                <h2 class="card-text" id="cancelledSubscriptions">0</h2>
+                                <small>Bu ay</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Abonelik Planları -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Abonelik Planları</h5>
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPlanModal">
+                            <i class="bi bi-plus"></i> Yeni Plan
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="plansTable">
+                                <thead>
+                                    <tr>
+                                        <th>Plan Adı</th>
+                                        <th>Fiyat</th>
+                                        <th>Süre</th>
+                                        <th>Aktif Aboneler</th>
+                                        <th>Durum</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- JavaScript ile doldurulacak -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Son İşlemler -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Son İşlemler</h5>
+                        <div>
+                            <button class="btn btn-outline-secondary" id="exportTransactions">
+                                <i class="bi bi-download"></i> Dışa Aktar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table" id="transactionsTable">
+                                <thead>
+                                    <tr>
+                                        <th>Tarih</th>
+                                        <th>İşlem No</th>
+                                        <th>Kullanıcı</th>
+                                        <th>Tutar</th>
+                                        <th>Tür</th>
+                                        <th>Durum</th>
+                                        <th>İşlemler</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- JavaScript ile doldurulacak -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Yeni Plan Modal -->
+    <div class="modal fade" id="addPlanModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Yeni Abonelik Planı</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addPlanForm">
+                        <div class="mb-3">
+                            <label class="form-label">Plan Adı</label>
+                            <input type="text" class="form-control" name="name" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Açıklama</label>
+                            <textarea class="form-control" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Fiyat</label>
+                            <div class="input-group">
+                                <span class="input-group-text">₺</span>
+                                <input type="number" class="form-control" name="price" step="0.01" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Süre (Ay)</label>
+                            <input type="number" class="form-control" name="duration" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Özellikler</label>
+                            <div id="featuresContainer">
+                                <div class="input-group mb-2">
+                                    <input type="text" class="form-control" name="features[]" placeholder="Özellik">
+                                    <button type="button" class="btn btn-outline-danger remove-feature">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary btn-sm" id="addFeature">
+                                <i class="bi bi-plus"></i> Özellik Ekle
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                    <button type="button" class="btn btn-primary" id="savePlan">Kaydet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- İşlem Detay Modal -->
+    <div class="modal fade" id="transactionDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">İşlem Detayı</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>İşlem Bilgileri</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>İşlem No:</th>
+                                    <td id="detailTransactionId"></td>
+                                </tr>
+                                <tr>
+                                    <th>Tarih:</th>
+                                    <td id="detailDate"></td>
+                                </tr>
+                                <tr>
+                                    <th>Tutar:</th>
+                                    <td id="detailAmount"></td>
+                                </tr>
+                                <tr>
+                                    <th>Durum:</th>
+                                    <td id="detailStatus"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Kullanıcı Bilgileri</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Ad Soyad:</th>
+                                    <td id="detailUserName"></td>
+                                </tr>
+                                <tr>
+                                    <th>Email:</th>
+                                    <td id="detailUserEmail"></td>
+                                </tr>
+                                <tr>
+                                    <th>Telefon:</th>
+                                    <td id="detailUserPhone"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>Fatura Bilgileri</h6>
+                            <table class="table table-sm">
+                                <tr>
+                                    <th>Fatura No:</th>
+                                    <td id="detailInvoiceNumber"></td>
+                                </tr>
+                                <tr>
+                                    <th>Vergi Tutarı:</th>
+                                    <td id="detailTaxAmount"></td>
+                                </tr>
+                                <tr>
+                                    <th>Toplam Tutar:</th>
+                                    <td id="detailTotalAmount"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                    <button type="button" class="btn btn-primary" id="downloadInvoice">
+                        <i class="bi bi-download"></i> Fatura İndir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="../js/admin.js"></script>
+    <script src="../js/admin-payments.js"></script>
+</body>
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR PHOBIA - Giriş</title>
+    <link rel="icon" type="image/png" href="assets/images/logo.png">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .bg-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.5rem 2.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="container mx-auto px-4">
+        <div class="max-w-md mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+            <div class="bg-gradient p-6 text-center">
+                <img src="assets/images/logo-white.png" alt="VR PHOBIA Logo" class="mx-auto h-20">
+                <h2 class="text-white text-2xl font-semibold mt-4">Çalışan Portalı</h2>
+            </div>
+            
+            <div class="p-6">
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label for="email" class="block text-gray-700 text-sm font-medium mb-1">E-posta</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+                            <input type="email" id="email" name="email" required
+                                class="form-input">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="password" class="block text-gray-700 text-sm font-medium mb-1">Şifre</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" id="password" name="password" required
+                                class="form-input">
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="remember" name="remember"
+                                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="remember" class="ml-2 block text-sm text-gray-700">
+                                Beni Hatırla
+                            </label>
+                        </div>
+                        <a href="forgot-password.html" class="text-sm text-indigo-600 hover:text-indigo-800">
+                            <i class="fas fa-key mr-1"></i>Şifremi Unuttum
+                        </a>
+                    </div>
+
+                    <div>
+                        <button type="submit"
+                            class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors">
+                            <span id="loginText">Giriş Yap</span>
+                            <span id="loadingText" class="hidden">
+                                <i class="fas fa-spinner fa-spin"></i> Giriş yapılıyor...
+                            </span>
+                        </button>
+                    </div>
+
+                    <div id="proMemberFeatures" class="hidden mt-4 p-4 bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-lg border border-yellow-200">
+                        <div class="flex items-center mb-2">
+                            <i class="fas fa-crown text-yellow-500 mr-2"></i>
+                            <span class="font-semibold text-gray-800">Pro Üye Özellikleri</span>
+                        </div>
+                        <ul class="text-sm text-gray-600 space-y-1">
+                            <li><i class="fas fa-check text-green-500 mr-1"></i> Hızlı giriş</li>
+                            <li><i class="fas fa-check text-green-500 mr-1"></i> Özel destek hattı</li>
+                            <li><i class="fas fa-check text-green-500 mr-1"></i> Gelişmiş özellikler</li>
+                        </ul>
+                    </div>
+                </form>
+
+                <div id="alertSuccess" class="hidden mt-4 p-4 rounded-md bg-green-50 text-green-700">
+                    <div class="flex">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        <span></span>
+                    </div>
+                </div>
+
+                <div id="alertError" class="hidden mt-4 p-4 rounded-md bg-red-50 text-red-700">
+                    <div class="flex">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const loginText = document.getElementById('loginText');
+            const loadingText = document.getElementById('loadingText');
+            const proMemberFeatures = document.getElementById('proMemberFeatures');
+
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const remember = document.getElementById('remember').checked;
+
+                loginText.classList.add('hidden');
+                loadingText.classList.remove('hidden');
+                
+                try {
+                    const response = await fetch('/api/auth/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        localStorage.setItem('token', data.token);
+                        if (data.isPro) {
+                            localStorage.setItem('isPro', 'true');
+                        }
+                        if (remember) {
+                            localStorage.setItem('remember', 'true');
+                        }
+                        window.location.href = '/dashboard.html';
+                    } else {
+                        showError(data.message || 'Giriş başarısız. Lütfen bilgilerinizi kontrol edin.');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showError('Bir hata oluştu. Lütfen daha sonra tekrar deneyin.');
+                } finally {
+                    loginText.classList.remove('hidden');
+                    loadingText.classList.add('hidden');
+                }
+            });
+
+            // Check if user is a pro member
+            if (localStorage.getItem('isPro') === 'true') {
+                proMemberFeatures.classList.remove('hidden');
+            }
+
+            function showError(message) {
+                const alertError = document.getElementById('alertError');
+                alertError.querySelector('span').textContent = message;
+                alertError.classList.remove('hidden');
+                setTimeout(() => alertError.classList.add('hidden'), 5000);
+            }
+
+            if (localStorage.getItem('remember') === 'true' && localStorage.getItem('token')) {
+                verifyToken();
+            }
+
+            async function verifyToken() {
+                try {
+                    const response = await fetch('/api/auth/verify', {
+                        headers: {
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        window.location.href = '/dashboard.html';
+                    } else {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('remember');
+                        localStorage.removeItem('isPro');
+                    }
+                } catch (error) {
+                    console.error('Token verification error:', error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
